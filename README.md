@@ -101,6 +101,11 @@ cd sudoshark
 ### Option 2 — GitHub Pages
 Visit: `https://sudoninja-noob.github.io/sudoshark/`
 
+
+### Option 3 — online 
+```bash
+Visit- https://sudoninja-noob.github.io/tool/sudoshark.html
+```
 ---
 
 ## 📋 Standards Coverage
