@@ -1,0 +1,3014 @@
+<!DOCTYPE html>
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   ███████╗██╗   ██╗██████╗  ██████╗ ███████╗██╗  ██╗ █████╗ ██████╗ ██╗  ╚╗
+║   ██╔════╝██║   ██║██╔══██╗██╔═══██╗██╔════╝██║  ██║██╔══██╗██╔══██╗██║   ║
+║   ███████╗██║   ██║██║  ██║██║   ██║███████╗███████║███████║██████╔╝██║   ║
+║   ╚════██║██║   ██║██║  ██║██║   ██║╚════██║██╔══██║██╔══██║██╔══██╗██║   ║
+║   ███████║╚██████╔╝██████╔╝╚██████╔╝███████║██║  ██║██║  ██║██║  ██║██║   ║
+║   ╚══════╝ ╚═════╝ ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ║
+║                                                                              ║
+║   🦈 SudoShark — Professional PCAP Security Analyzer v2.0.0                 ║
+║                                                                              ║
+║   Author   : @sudoninja (Sanjay) · Senior Manager, Cyber Security Services  ║
+║   Employer : SGS Brightsight (formerly Granite River Labs)                   ║
+║   GitHub   : https://github.com/sudoninja-noob                              ║
+║   Built    : 2026 · Single-file HTML · Zero dependencies · 100% local       ║
+║                                                                              ║
+║   FEATURES                                                                   ║
+║   ├─ Binary PCAP/PCAPNG parser (no server, no upload)                       ║
+║   ├─ 60+ protocol dissectors (TCP/UDP/ICMP/DNS/HTTP/TLS/BGP/OSPF...)        ║
+║   ├─ Telecom: SCTP · Diameter · GTPv2 · PFCP · PTP/IEEE 1588               ║
+║   ├─ IoT/OT: MQTT · Modbus · CoAP · DNP3 · BACnet                          ║
+║   ├─ VoIP: SIP call tracking · RTP quality · RTCP loss/jitter               ║
+║   ├─ Security: credential harvesting · TLS cipher audit · port scan detect  ║
+║   ├─ TCP stream reassembly · Wireshark display filter syntax                 ║
+║   ├─ Standards: EN 303 645 · 3GPP TS 33.117 · GSMA FS.11 · IEC 62443       ║
+║   └─ Report generator (HTML/CSV export)                                      ║
+║                                                                              ║
+║   LICENSE  : MIT                                                             ║
+║   VERSION  : 2.0.0                                                           ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SudoShark — PCAP Analyzer by @sudoninja</title>
+<meta name="description" content="SudoShark — Professional PCAP packet analyzer for telecom, IoT, and network security testing. Supports 60+ protocols, TCP stream reassembly, credential harvesting, 5G/telecom analysis, VoIP call tracking, and standards-based compliance checks. Built by @sudoninja.">
+<meta name="author" content="@sudoninja — Sanjay, SGS Brightsight">
+<meta name="keywords" content="pcap analyzer, wireshark alternative, network forensics, telecom security, IoT security, 5G testing, TIC lab, EN 303 645, 3GPP TS 33.117, packet analysis, SudoShark, sudoninja">
+<meta property="og:title" content="SudoShark — PCAP Analyzer">
+<meta property="og:description" content="Professional packet analyzer for security engineers. 60+ protocols, 5G/telecom, IoT/OT, TLS audit, credential harvesting, report generation.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@sudoninja">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦈</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #08090e;
+  --s1:       #0f1117;
+  --s2:       #13151d;
+  --s3:       #181c27;
+  --s4:       #1e2233;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.12);
+  --text:     #e8eaf0;
+  --text2:    #6b7280;
+  --text3:    #374151;
+  --accent:   #4f8ef7;
+  --accent2:  #1e3a6e;
+  --green:    #34d399;
+  --red:      #f87171;
+  --yellow:   #fbbf24;
+  --orange:   #fb923c;
+  --purple:   #a78bfa;
+  --teal:     #2dd4bf;
+  --pink:     #f472b6;
+  --mono:     'JetBrains Mono', monospace;
+  --sans:     'Inter', system-ui, sans-serif;
+  --r:        6px;
+  --r2:       10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s4);border-radius:3px}
+
+/* ── Upload screen ── */
+#uploadScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px;gap:32px}
+.ns-logo{display:flex;align-items:center;gap:12px}
+.ns-logo-mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0a1f3d,#0e7fa8,#00c8ff);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 24px rgba(0,200,255,0.3)}
+.ns-logo-text{font-size:22px;font-weight:600;letter-spacing:-0.5px}
+.ns-logo-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.drop-card{border:1.5px dashed rgba(79,142,247,0.3);border-radius:20px;padding:64px 80px;text-align:center;cursor:pointer;transition:all .2s;max-width:540px;width:100%;background:var(--s1);position:relative;overflow:hidden}
+.drop-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(79,142,247,0.05),transparent 60%);pointer-events:none}
+.drop-card:hover,.drop-card.drag{border-color:var(--accent);background:var(--s2)}
+.drop-icon{font-size:52px;margin-bottom:20px;display:block}
+.drop-title{font-size:18px;font-weight:600;margin-bottom:8px;color:var(--text)}
+.drop-sub{color:var(--text2);font-size:13px;line-height:1.7;margin-bottom:28px}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:10px 22px;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s;font-family:var(--sans)}
+.btn-primary:hover{opacity:.85}
+.proto-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+.proto-tag{font-size:10px;font-family:var(--mono);background:var(--s3);border:1px solid var(--border2);border-radius:20px;padding:3px 9px;color:var(--text2)}
+.err-box{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:var(--r2);padding:14px 18px;max-width:540px;width:100%;font-size:12px;color:var(--red);font-family:var(--mono);line-height:1.6;display:none;white-space:pre-wrap}
+
+/* ── Main app ── */
+#app{display:none;flex-direction:column;height:100vh}
+#app.on{display:flex}
+
+/* ── Top bar ── */
+.topbar{height:52px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;z-index:50}
+.tb-logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;margin-right:4px}
+.tb-logo-mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#1a3a8f,#4f8ef7);display:flex;align-items:center;justify-content:center;font-size:13px}
+.file-pill{display:flex;align-items:center;gap:6px;background:var(--s3);border:1px solid var(--border2);border-radius:20px;padding:3px 10px;font-size:11px;font-family:var(--mono);color:var(--text2)}
+.file-pill span{color:var(--text);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sep{width:1px;height:18px;background:var(--border2)}
+.tb-filter{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);padding:5px 10px;font-family:var(--mono);font-size:11px;width:200px;outline:none}
+.tb-filter:focus{border-color:var(--accent)}
+.tb-btn{background:var(--s2);border:1px solid var(--border2);color:var(--text2);border-radius:var(--r);padding:5px 10px;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:var(--sans)}
+.tb-btn:hover{background:var(--s3);color:var(--text)}
+.tb-btn.act{background:var(--accent2);border-color:var(--accent);color:var(--accent)}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.pkt-count{font-size:11px;color:var(--text2);font-family:var(--mono)}
+#pbWrap{display:none;align-items:center;gap:8px;font-size:11px;color:var(--text2)}
+.pb-track{width:120px;height:4px;background:var(--s3);border-radius:2px;overflow:hidden}
+.pb-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .1s;width:0}
+.proto-filter-row{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.pb{font-size:10px;font-family:var(--mono);font-weight:700;border-radius:3px;padding:2px 6px;cursor:pointer;border:1px solid transparent;transition:opacity .15s;user-select:none}
+.pb.dim{opacity:.28}
+
+/* ── View tabs ── */
+.view-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--s1);flex-shrink:0}
+.vtab{padding:8px 16px;font-size:12px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;transition:all .15s;user-select:none;display:flex;align-items:center;gap:6px}
+.vtab:hover{color:var(--text)}
+.vtab.act{color:var(--accent);border-bottom-color:var(--accent)}
+.vtab-icon{font-size:13px}
+
+/* ── Body split ── */
+.body{display:flex;flex:1;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{width:230px;min-width:200px;background:var(--s1);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;gap:0}
+.sb-section{padding:14px 14px 12px;border-bottom:1px solid var(--border)}
+.sb-title{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.stat-card{background:var(--s2);border-radius:var(--r);padding:8px 10px;border:1px solid var(--border)}
+.stat-val{font-size:16px;font-weight:600;font-family:var(--mono);color:var(--text);line-height:1}
+.stat-lbl{font-size:9px;color:var(--text2);margin-top:3px;text-transform:uppercase;letter-spacing:0.5px}
+.stat-val.acc{color:var(--accent)}
+.stat-val.grn{color:var(--green)}
+.stat-val.red{color:var(--red)}
+.stat-val.yel{color:var(--yellow)}
+.proto-bar{margin-bottom:7px}
+.pb-hdr{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px}
+.pb-name{font-family:var(--mono);font-weight:600}
+.pb-pct{color:var(--text2)}
+.pb-track2{height:3px;background:var(--s3);border-radius:2px;overflow:hidden}
+.pb-fill2{height:100%;border-radius:2px}
+.talker{display:flex;justify-content:space-between;padding:3px 0;font-size:10px;font-family:var(--mono);border-bottom:1px solid var(--border);color:var(--text2)}
+.talker:last-child{border-bottom:none}
+.talker-ip{color:var(--text)}
+.alert-row{display:flex;gap:7px;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--border);font-size:10px;line-height:1.5}
+.alert-row:last-child{border-bottom:none}
+.al-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.al-high{background:var(--red)}
+.al-med{background:var(--yellow)}
+.al-low{background:var(--green)}
+.al-msg{color:var(--text2)}
+.conn-row{display:flex;justify-content:space-between;padding:3px 0;font-size:10px;font-family:var(--mono);border-bottom:1px solid var(--border)}
+.conn-row:last-child{border-bottom:none}
+.conn-pair{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px}
+.conn-pkts{color:var(--text2);flex-shrink:0}
+
+/* ── Views ── */
+.view{display:none;flex:1;overflow:hidden;flex-direction:column}
+.view.act{display:flex}
+
+/* ── Packet list ── */
+.pkt-table-wrap{flex:1;overflow-y:auto}
+table.pt{width:100%;border-collapse:collapse}
+table.pt thead{position:sticky;top:0;z-index:10;background:var(--s2)}
+table.pt th{padding:7px 10px;text-align:left;font-size:10px;font-weight:500;color:var(--text2);white-space:nowrap;border-right:1px solid var(--border);border-bottom:1px solid var(--border2);cursor:pointer;user-select:none}
+table.pt th:hover{color:var(--text)}
+table.pt td{padding:4px 10px;font-size:11px;font-family:var(--mono);border-bottom:1px solid rgba(255,255,255,0.03);white-space:nowrap;border-right:1px solid rgba(255,255,255,0.02)}
+tr.pr{cursor:pointer;transition:background .08s}
+tr.pr:hover{background:var(--s2)}
+tr.pr.sel{background:var(--accent2)!important}
+tr.pr.sus{background:rgba(248,113,113,0.04)}
+tr.pr.sus:hover{background:rgba(248,113,113,0.08)}
+td.no{color:var(--text3)}
+td.ts{color:var(--text2)}
+
+/* ── Detail pane ── */
+.detail{width:320px;min-width:280px;background:var(--s1);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.detail-hdr{padding:10px 14px;border-bottom:1px solid var(--border);font-size:10px;color:var(--text2);font-weight:500;letter-spacing:0.5px;text-transform:uppercase;flex-shrink:0}
+.detail-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text3);font-size:12px;padding:20px}
+.de-icon{font-size:32px;opacity:.3}
+.layer{border-bottom:1px solid var(--border)}
+.layer-hdr{display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;user-select:none;transition:background .1s}
+.layer-hdr:hover{background:var(--s2)}
+.layer-icon{font-size:14px;width:20px;text-align:center}
+.layer-name{font-size:11px;font-weight:600;flex:1}
+.layer-chv{font-size:10px;color:var(--text2);transition:transform .2s}
+.layer-chv.open{transform:rotate(90deg)}
+.layer-body{display:none;padding:0 14px 8px 42px}
+.layer-body.open{display:block}
+.lf{display:flex;justify-content:space-between;padding:3px 0;font-size:10px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.lf:last-child{border-bottom:none}
+.lf-k{color:var(--text2);flex-shrink:0;margin-right:8px}
+.lf-v{font-family:var(--mono);color:var(--text);text-align:right;word-break:break-all;max-width:160px}
+.lf-v.acc{color:var(--accent)}
+.lf-v.grn{color:var(--green)}
+.lf-v.red{color:var(--red)}
+.lf-v.yel{color:var(--yellow)}
+.hex-view{padding:10px 14px;font-family:var(--mono);font-size:9px;line-height:1.8;color:var(--text2);white-space:pre;overflow-x:auto;background:var(--s2);border-top:1px solid var(--border);max-height:160px;overflow-y:auto;flex-shrink:0}
+
+/* ── Dashboard view ── */
+.dash{flex:1;overflow-y:auto;padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;align-content:start}
+.dash-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
+.dc-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.dc-icon{font-size:14px}
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.metric{background:var(--s2);border-radius:var(--r);padding:10px;border:1px solid var(--border)}
+.metric-val{font-size:18px;font-weight:600;font-family:var(--mono);color:var(--text);line-height:1}
+.metric-lbl{font-size:9px;color:var(--text2);margin-top:4px}
+.mini-table{width:100%;font-size:10px;font-family:var(--mono);border-collapse:collapse}
+.mini-table td{padding:3px 4px;border-bottom:1px solid var(--border);color:var(--text2)}
+.mini-table td:first-child{color:var(--text)}
+.mini-table tr:last-child td{border-bottom:none}
+.bar-chart{display:flex;flex-direction:column;gap:6px}
+.bc-row{display:flex;align-items:center;gap:8px;font-size:10px}
+.bc-label{font-family:var(--mono);color:var(--text);min-width:60px;text-align:right}
+.bc-track{flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden}
+.bc-fill{height:100%;border-radius:3px;transition:width .5s}
+.bc-val{color:var(--text2);min-width:35px;text-align:right}
+.timeline-canvas{width:100%;height:60px;display:block}
+.flag-list{display:flex;flex-direction:column;gap:5px}
+.flag-item{display:flex;align-items:flex-start;gap:8px;padding:6px 8px;background:var(--s2);border-radius:var(--r);border:1px solid var(--border);font-size:10px}
+.flag-sev{font-size:9px;font-weight:700;border-radius:3px;padding:1px 5px;flex-shrink:0;margin-top:1px}
+.sev-high{background:rgba(248,113,113,.15);color:var(--red)}
+.sev-med{background:rgba(251,191,36,.12);color:var(--yellow)}
+.sev-low{background:rgba(52,211,153,.1);color:var(--green)}
+.flag-msg{color:var(--text2);line-height:1.4}
+.flow-table{width:100%;font-size:10px;font-family:var(--mono);border-collapse:collapse}
+.flow-table th{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:3px 6px;text-align:left;border-bottom:1px solid var(--border)}
+.flow-table td{padding:4px 6px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--text2)}
+.flow-table td:first-child{color:var(--text)}
+.flow-table tr:last-child td{border-bottom:none}
+.geo-list{display:flex;flex-direction:column;gap:4px}
+.geo-item{display:flex;align-items:center;gap:8px;font-size:10px;padding:4px 0;border-bottom:1px solid var(--border)}
+.geo-item:last-child{border-bottom:none}
+.geo-flag{font-size:14px;width:20px;text-align:center}
+.geo-ip{font-family:var(--mono);color:var(--text)}
+.geo-desc{color:var(--text2)}
+.no-data{color:var(--text3);font-size:11px;text-align:center;padding:20px}
+
+/* ── Stream reassembly view ── */
+.stream-wrap{flex:1;display:flex;overflow:hidden}
+.stream-list{width:280px;background:var(--s1);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+.sl-header{padding:10px 12px;border-bottom:1px solid var(--border);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--text2);display:flex;align-items:center;justify-content:space-between}
+.sl-search{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);padding:5px 9px;font-size:11px;width:100%;font-family:var(--mono);outline:none;margin:8px 12px;width:calc(100% - 24px)}
+.sl-search:focus{border-color:var(--accent)}
+.stream-item{padding:8px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.stream-item:hover{background:var(--s2)}
+.stream-item.sel{background:var(--accent2)!important}
+.si-top{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.si-proto{font-size:9px;font-weight:700;border-radius:3px;padding:1px 5px}
+.si-pair{font-size:10px;font-family:var(--mono);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.si-meta{font-size:9px;color:var(--text2);font-family:var(--mono)}
+.stream-detail{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.sd-header{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--s1);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sd-title{font-size:11px;font-weight:600;color:var(--text);flex:1}
+.sd-btn{background:var(--s2);border:1px solid var(--border2);color:var(--text2);border-radius:var(--r);padding:4px 9px;font-size:10px;cursor:pointer;transition:background .1s}
+.sd-btn:hover{background:var(--s3);color:var(--text)}
+.sd-btn.act{background:var(--accent2);border-color:var(--accent);color:var(--accent)}
+.stream-content{flex:1;overflow-y:auto;padding:14px;font-family:var(--mono);font-size:11px;line-height:1.7;white-space:pre-wrap;word-break:break-all}
+.sc-client{color:#60d394;background:rgba(96,211,148,0.05);border-left:2px solid #60d394;padding:2px 8px;margin:1px 0;border-radius:0 3px 3px 0}
+.sc-server{color:#60a5fa;background:rgba(96,165,250,0.05);border-left:2px solid #60a5fa;padding:2px 8px;margin:1px 0;border-radius:0 3px 3px 0}
+.stream-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text3);font-size:12px}
+/* ── Credentials view ── */
+.creds-wrap{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.creds-header{display:flex;align-items:center;gap:12px;padding:0 0 8px;border-bottom:1px solid var(--border)}
+.creds-stat{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;font-size:11px;text-align:center}
+.creds-stat-val{font-size:20px;font-weight:700;font-family:var(--mono);color:var(--red);display:block}
+.creds-stat-lbl{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px}
+.cred-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.cred-card.high{border-color:rgba(248,113,113,0.4)}
+.cc-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--s2);border-bottom:1px solid var(--border)}
+.cc-proto{font-size:10px;font-weight:700;border-radius:3px;padding:2px 7px}
+.cc-pair{font-size:11px;font-family:var(--mono);color:var(--text);flex:1}
+.cc-pkt{font-size:10px;color:var(--text2);font-family:var(--mono);cursor:pointer;text-decoration:underline}
+.cc-body{padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cc-field{font-size:10px}
+.cc-label{color:var(--text2);margin-bottom:2px;text-transform:uppercase;letter-spacing:0.5px;font-size:9px}
+.cc-value{font-family:var(--mono);color:var(--text);background:var(--s3);border-radius:3px;padding:3px 7px;word-break:break-all}
+.cc-value.danger{color:var(--red);background:rgba(248,113,113,0.08)}
+.creds-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text2);font-size:12px;padding:40px;text-align:center}
+/* ── IoT protocols ── */
+.iot-badge{font-size:10px;font-weight:700;border-radius:3px;padding:2px 6px;background:rgba(34,211,238,0.15);color:#22d3ee}
+/* ── Filter bar enhanced ── */
+.filter-wrap{display:flex;align-items:center;gap:4px;flex:1;max-width:340px}
+.filter-mode{font-size:9px;font-family:var(--mono);background:var(--s3);border:1px solid var(--border2);color:var(--text2);border-radius:3px 0 0 3px;padding:5px 7px;border-right:none;cursor:default}
+.tb-filter{border-radius:0 var(--r) var(--r) 0!important}
+.filter-help{font-size:10px;color:var(--accent);cursor:pointer;text-decoration:none;white-space:nowrap}
+
+/* ── Telecom / VoIP / Routing views ── */
+.call-table{width:100%;border-collapse:collapse;font-size:11px;font-family:var(--mono)}
+.call-table th{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:5px 8px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+.call-table td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--text2);white-space:nowrap}
+.call-table td:first-child{color:var(--text)}
+.call-table tr:last-child td{border-bottom:none}
+.mos-pill{display:inline-block;border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700}
+.mos-good{background:rgba(52,211,153,.15);color:#34d399}
+.mos-fair{background:rgba(251,191,36,.12);color:#fbbf24}
+.mos-poor{background:rgba(248,113,113,.15);color:#f87171}
+.topo-svg{width:100%;height:320px;background:var(--s2);border-radius:var(--r);border:1px solid var(--border);display:block}
+.cipher-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:10px}
+.cipher-row:last-child{border-bottom:none}
+.cipher-name{font-family:var(--mono);color:var(--text);flex:1}
+.cipher-grade{font-size:9px;font-weight:700;border-radius:3px;padding:1px 6px;white-space:nowrap}
+.cg-a{background:rgba(52,211,153,.15);color:#34d399}
+.cg-b{background:rgba(96,165,250,.15);color:#60a5fa}
+.cg-c{background:rgba(251,191,36,.12);color:#fbbf24}
+.cg-f{background:rgba(248,113,113,.15);color:#f87171}
+.report-section{margin-bottom:20px}
+.report-hdr{font-size:11px;font-weight:600;color:var(--text);padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.compliance-table{width:100%;border-collapse:collapse;font-size:10px}
+.compliance-table th{font-size:9px;color:var(--text3);text-transform:uppercase;font-weight:600;padding:4px 8px;text-align:left;border-bottom:1px solid var(--border)}
+.compliance-table td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.03);font-family:var(--mono)}
+.comp-pass{color:#34d399}
+.comp-warn{color:#fbbf24}
+.comp-fail{color:#f87171}
+.vtab-icon{margin-right:3px}
+/* ── Node graph ── */
+.node-router{fill:#1e3a6e;stroke:#4f8ef7;stroke-width:1.5}
+.node-host{fill:#1a2e1a;stroke:#34d399;stroke-width:1.5}
+.node-telecom{fill:#2d1a3a;stroke:#a78bfa;stroke-width:1.5}
+.edge-line{stroke:rgba(255,255,255,0.15);stroke-width:1}
+.node-label{fill:#e8eaf0;font-size:9px;font-family:'JetBrains Mono',monospace}
+
+/* ── SudoShark Brand ── */
+.brand-accent{color:#00c8ff}
+.ss-shark-svg{width:32px;height:32px}
+.ss-version{font-size:9px;color:var(--text3);font-family:var(--mono);margin-top:1px;letter-spacing:0.5px}
+.ss-by{font-size:10px;color:var(--text2);margin-top:2px}
+.ss-by a{color:#00c8ff;text-decoration:none}
+.ss-by a:hover{text-decoration:underline}
+.github-btn{display:inline-flex;align-items:center;gap:6px;background:var(--s3);border:1px solid var(--border2);border-radius:var(--r);padding:5px 12px;font-size:11px;color:var(--text2);cursor:pointer;text-decoration:none;transition:all .15s}
+.github-btn:hover{background:var(--s4);color:var(--text);border-color:#00c8ff}
+.github-btn svg{width:14px;height:14px;fill:currentColor}
+.upload-footer{display:flex;align-items:center;gap:16px;margin-top:16px;font-size:11px;color:var(--text2)}
+.upload-footer a{color:#00c8ff;text-decoration:none}
+.upload-footer a:hover{text-decoration:underline}
+.upload-badge{display:inline-flex;align-items:center;gap:4px;background:var(--s3);border:1px solid var(--border2);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--text2)}
+.topbar-version{font-size:9px;color:var(--text3);font-family:var(--mono);margin-left:2px;align-self:flex-end;margin-bottom:2px}
+/* ── Drop card override for SudoShark ── */
+.drop-card{border-color:rgba(0,200,255,0.2)!important}
+.drop-card:hover,.drop-card.drag{border-color:rgba(0,200,255,0.6)!important;background:rgba(0,200,255,0.03)!important}
+.drop-card::before{background:radial-gradient(ellipse at 50% 0%,rgba(0,200,255,0.06),transparent 60%)!important}
+.tb-logo-mark{background:linear-gradient(135deg,#0a1f3d,#0e7fa8,#00c8ff)!important;box-shadow:0 0 12px rgba(0,200,255,0.2)!important}
+/* ── Scrollbar SudoShark ── */
+::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.15)!important}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,200,255,0.3)!important}
+/* ── Filter bar accent ── */
+.tb-filter:focus{border-color:#00c8ff!important}
+/* ── Selected row ── */
+tr.pr.sel{background:rgba(0,200,255,0.08)!important;border-left:2px solid #00c8ff}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     UPLOAD SCREEN
+══════════════════════════════════════════════ -->
+<div id="uploadScreen" style="position:relative">
+  <div class="ns-logo">
+    <div class="ns-logo-mark">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="ss-shark-svg">
+        <path d="M4 20 C6 10, 14 6, 22 8 C28 9, 32 14, 30 20 C28 26, 20 30, 12 28 C7 26, 3 23, 4 20Z" fill="rgba(0,200,255,0.25)" stroke="#00c8ff" stroke-width="1.2"/>
+        <path d="M22 8 L26 4 L24 10Z" fill="#00c8ff" opacity="0.8"/>
+        <path d="M14 22 L12 26 L16 24Z" fill="rgba(0,200,255,0.6)"/>
+        <circle cx="10" cy="17" r="1.5" fill="#00c8ff"/>
+        <path d="M16 18 C18 16, 22 16, 24 18" stroke="#00c8ff" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+      </svg>
+    </div>
+    <div>
+      <div class="ns-logo-text">Sudo<span class="brand-accent">Shark</span></div>
+      <div class="ss-version">v2.0.0 · PCAP Security Analyzer</div>
+      <div class="ss-by">by <a href="https://github.com/sudoninja-noob" target="_blank">@sudoninja</a> · SGS Brightsight</div>
+    </div>
+  </div>
+  <div class="drop-card" id="dropArea">
+    <svg viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:64px;height:44px;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto">
+      <path d="M6 28 C8 14, 20 8, 32 10 C42 12, 50 20, 48 28 C46 36, 32 42, 18 40 C9 38, 4 33, 6 28Z" fill="rgba(0,200,255,0.12)" stroke="#00c8ff" stroke-width="1.2"/>
+      <path d="M32 10 L38 4 L36 13Z" fill="#00c8ff" opacity="0.9"/>
+      <path d="M20 30 L17 36 L23 33Z" fill="rgba(0,200,255,0.7)"/>
+      <circle cx="16" cy="24" r="2" fill="#00c8ff"/>
+      <path d="M24 26 C27 23, 33 23, 36 26" stroke="#00c8ff" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+    </svg>
+    <div class="drop-title">Drop your PCAP file here</div>
+    <div class="drop-sub">Professional packet analysis for security engineers<br>60+ protocols · telecom · IoT/OT · credentials · reporting</div>
+    <button class="btn-primary" onclick="document.getElementById('fi').click()">🦈 Analyze Capture</button>
+    <div class="proto-tags" style="margin-top:16px">
+      <span class="proto-tag">.pcap</span><span class="proto-tag">.pcapng</span>
+      <span class="proto-tag">GTP/PFCP/Diameter</span><span class="proto-tag">SCTP/SIP/RTP</span>
+      <span class="proto-tag">MQTT/Modbus/CoAP</span><span class="proto-tag">BGP/OSPF/STP</span>
+      <span class="proto-tag">TLS cipher audit</span><span class="proto-tag">🔒 100% local — no upload</span>
+    </div>
+  </div>
+  <div class="upload-footer">
+    <a href="https://github.com/sudoninja-noob" target="_blank">
+      <svg viewBox="0 0 16 16" style="width:14px;height:14px;fill:#00c8ff;vertical-align:-2px;margin-right:4px" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      github.com/sudoninja-noob
+    </a>
+    <span class="upload-badge">🛡 TIC Lab Edition</span>
+    <span class="upload-badge">📋 EN 303 645 · 3GPP TS 33.117</span>
+    <span class="upload-badge">🔌 IoT/OT · 5G Telecom</span>
+  </div>
+  <div class="err-box" id="errBox"></div>
+  <!-- GitHub corner -->
+  <a href="https://github.com/sudoninja-noob" target="_blank" style="position:absolute;top:0;right:0;z-index:200" aria-label="View on GitHub">
+    <svg width="60" height="60" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0 L80 0 L80 80 Z" fill="rgba(0,200,255,0.12)" stroke="none"/>
+      <path d="M0 0 L80 0 L80 80 Z" fill="none" stroke="#00c8ff" stroke-width="0.5"/>
+      <path transform="translate(42,8) rotate(45)" fill="#00c8ff" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" style="width:16px;height:16px"/>
+    </svg>
+  </a>
+  <input type="file" id="fi" accept=".pcap,.pcapng" style="display:none">
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MAIN APP
+══════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="tb-logo">
+      <div class="tb-logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px">
+          <path d="M3 14 C4 8, 10 5, 15 6 C19 7, 22 10, 21 14 C20 18, 14 21, 8 19 C4 18, 2 16, 3 14Z" fill="rgba(0,200,255,0.3)" stroke="#00c8ff" stroke-width="1"/>
+          <path d="M15 6 L18 3 L17 8Z" fill="#00c8ff"/>
+          <circle cx="7" cy="13" r="1" fill="#00c8ff"/>
+        </svg>
+      </div>
+      Sudo<span style="color:#00c8ff">Shark</span>
+      <span class="topbar-version">v2.0</span>
+    </div>
+    <div class="sep"></div>
+    <div class="file-pill" id="filePill" style="display:none">
+      📄 <span id="fileName">—</span> <span id="fileSize" style="opacity:.5"></span>
+    </div>
+    <div class="sep"></div>
+    <span class="filter-mode" id="fmode">txt</span><input class="tb-filter" id="filterInput" placeholder="ip.src==10.0.0.1  or  tcp.port==80  or  dns" oninput="applyFilter()" style="border-radius:0 var(--r) var(--r) 0">
+    <button class="tb-btn" onclick="clearFilter()">✕</button>
+    <div class="sep"></div>
+    <div class="proto-filter-row" id="protoFilterRow"></div>
+    <div class="sep"></div>
+    <button class="tb-btn" id="btnAll" onclick="setMode('all')">All</button>
+    <button class="tb-btn" id="btnSusp" onclick="setMode('sus')">⚠ Suspicious</button>
+    <div class="tb-right">
+      <div id="pbWrap"><div class="pb-track"><div class="pb-fill" id="pbFill"></div></div><span id="pbLabel">Parsing…</span></div>
+      <span class="pkt-count" id="pktCount"></span>
+      <button class="tb-btn" onclick="exportCSV()">⬇ CSV</button>
+      <button class="tb-btn" onclick="openNew()">📂 Open</button>
+    </div>
+  </div>
+
+  <!-- View tabs -->
+  <div class="view-tabs">
+    <div class="vtab act" onclick="switchView('packets',this)"><span class="vtab-icon">📋</span> Packets</div>
+    <div class="vtab" onclick="switchView('dashboard',this)"><span class="vtab-icon">📊</span> Dashboard</div>
+    <div class="vtab" onclick="switchView('streams',this)"><span class="vtab-icon">🔄</span> Streams</div>
+    <div class="vtab" onclick="switchView('credentials',this)"><span class="vtab-icon">🔓</span> Credentials</div>
+    <div class="vtab" onclick="switchView('iot',this)"><span class="vtab-icon">🔌</span> IoT/OT</div>
+    <div class="vtab" onclick="switchView('voip',this)"><span class="vtab-icon">☎</span> VoIP</div>
+    <div class="vtab" onclick="switchView('routing',this)"><span class="vtab-icon">🗺</span> Routing</div>
+    <div class="vtab" onclick="switchView('telecom5g',this)"><span class="vtab-icon">📡</span> 5G/Telecom</div>
+    <div class="vtab" onclick="switchView('report',this)"><span class="vtab-icon">📄</span> Report</div>
+  </div>
+
+  <!-- Body -->
+  <div class="body">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sb-section">
+        <div class="sb-title">Capture summary</div>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-val acc" id="s-total">0</div><div class="stat-lbl">Packets</div></div>
+          <div class="stat-card"><div class="stat-val grn" id="s-ips">0</div><div class="stat-lbl">Unique IPs</div></div>
+          <div class="stat-card"><div class="stat-val" id="s-dur">—</div><div class="stat-lbl">Duration</div></div>
+          <div class="stat-card"><div class="stat-val" id="s-bytes">—</div><div class="stat-lbl">Total bytes</div></div>
+          <div class="stat-card"><div class="stat-val yel" id="s-susp">0</div><div class="stat-lbl">Alerts</div></div>
+          <div class="stat-card"><div class="stat-val" id="s-avg">—</div><div class="stat-lbl">Avg size</div></div>
+        </div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-title">Protocol mix</div>
+        <div id="protoBars"></div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-title">Top talkers</div>
+        <div id="topTalkers"></div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-title">Security flags</div>
+        <div id="alertsList"></div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-title">Top flows</div>
+        <div id="topFlows"></div>
+      </div>
+    </div>
+
+    <!-- Packets view -->
+    <div class="view act" id="view-packets">
+      <div class="pkt-table-wrap">
+        <table class="pt">
+          <thead><tr>
+            <th style="width:46px">#</th>
+            <th style="width:88px">Time</th>
+            <th style="width:150px">Source</th>
+            <th style="width:150px">Destination</th>
+            <th style="width:72px">Protocol</th>
+            <th style="width:56px">Length</th>
+            <th>Info</th>
+          </tr></thead>
+          <tbody id="pktBody"></tbody>
+        </table>
+      </div>
+      <!-- Detail -->
+      <div class="detail" id="detailPane">
+        <div class="detail-hdr">Packet inspector</div>
+        <div class="detail-empty" id="detailEmpty">
+          <div class="de-icon">🔬</div>
+          <span>Select a packet to inspect layers</span>
+        </div>
+        <div id="detailLayers" style="display:none"></div>
+        <div class="hex-view" id="hexView" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- Dashboard view -->
+    <div class="view" id="view-dashboard">
+      <div class="dash" id="dashContent">
+        <div class="no-data" style="grid-column:1/-1">Load a PCAP file to see the dashboard</div>
+      </div>
+    </div>
+
+    <!-- Streams view -->
+    <div class="view" id="view-streams">
+      <div class="stream-wrap">
+        <div class="stream-list">
+          <div class="sl-header">
+            <span>TCP / UDP Streams</span>
+            <span id="streamCount" style="color:var(--accent);font-family:var(--mono)">0</span>
+          </div>
+          <input class="sl-search" id="streamSearch" placeholder="filter streams…" oninput="filterStreams()">
+          <div id="streamList"></div>
+        </div>
+        <div class="stream-detail">
+          <div class="stream-empty" id="streamEmpty">
+            <div style="font-size:32px;opacity:.3">🔄</div>
+            <span>Select a stream to reassemble</span>
+          </div>
+          <div id="streamDetailWrap" style="display:none;flex:1;display:none;flex-direction:column">
+            <div class="sd-header">
+              <div class="sd-title" id="streamTitle">—</div>
+              <button class="sd-btn act" id="btnBoth" onclick="setStreamMode('both')">Both</button>
+              <button class="sd-btn" id="btnClient" onclick="setStreamMode('client')">Client</button>
+              <button class="sd-btn" id="btnServer" onclick="setStreamMode('server')">Server</button>
+              <button class="sd-btn" id="btnHex" onclick="setStreamMode('hex')">Hex</button>
+              <button class="sd-btn" onclick="copyStream()">Copy</button>
+            </div>
+            <div class="stream-content" id="streamContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Credentials view -->
+    <div class="view" id="view-credentials">
+      <div class="creds-wrap" id="credsWrap">
+        <div class="creds-empty" id="credsEmpty">
+          <div style="font-size:36px">🔓</div>
+          <strong>Credential Harvester</strong>
+          <span style="color:var(--text2)">Automatically extracts cleartext credentials from FTP, POP3, IMAP, HTTP, Telnet, SMTP, RADIUS across the entire capture.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- IoT/OT view -->
+    <div class="view" id="view-iot">
+      <div class="dash" id="iotContent">
+        <div class="no-data" style="grid-column:1/-1">Load a capture with IoT/OT traffic to see analysis</div>
+      </div>
+    </div>
+
+    <!-- VoIP view -->
+    <div class="view" id="view-voip">
+      <div class="dash" id="voipContent">
+        <div class="no-data" style="grid-column:1/-1">Load a capture with SIP/RTP traffic to see VoIP analysis</div>
+      </div>
+    </div>
+
+    <!-- Routing view -->
+    <div class="view" id="view-routing">
+      <div class="dash" id="routingContent">
+        <div class="no-data" style="grid-column:1/-1">Load a capture with BGP/OSPF/STP traffic to see routing analysis</div>
+      </div>
+    </div>
+
+    <!-- 5G/Telecom view -->
+    <div class="view" id="view-telecom5g">
+      <div class="dash" id="telecomContent">
+        <div class="no-data" style="grid-column:1/-1">Load a capture with GTP/DIAMETER/SCTP/PFCP traffic to see 5G/telecom analysis</div>
+      </div>
+    </div>
+
+    <!-- Report view -->
+    <div class="view" id="view-report">
+      <div style="flex:1;overflow-y:auto;padding:20px;max-width:900px;margin:0 auto;width:100%">
+        <div id="reportContent">
+          <div class="no-data" style="padding:40px">Load a PCAP file to generate a report</div>
+        </div>
+        <div style="display:flex;gap:8px;padding:16px 0;border-top:1px solid var(--border);margin-top:16px" id="reportActions" style="display:none">
+          <button class="tb-btn" onclick="exportReportHTML()">⬇ HTML Report</button>
+          <button class="tb-btn" onclick="exportReportCSV()">⬇ CSV Summary</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  BINARY PCAP / PCAPNG PARSER
+// ════════════════════════════════════════════════════════
+function parsePcap(buffer) {
+  if (buffer.byteLength < 24) throw new Error('File too small');
+  const v = new DataView(buffer);
+  const mLE = v.getUint32(0,true), mBE = v.getUint32(0,false);
+  const MAGIC = 0xa1b2c3d4, MAGIC_NS = 0xa1b23c4d, NG = 0x0A0D0D0A;
+  let le, ns;
+  if      (mLE===MAGIC)    {le=true; ns=false}
+  else if (mLE===MAGIC_NS) {le=true; ns=true}
+  else if (mBE===MAGIC)    {le=false;ns=false}
+  else if (mBE===MAGIC_NS) {le=false;ns=true}
+  else if (mLE===NG||mBE===NG) return parsePcapNG(buffer);
+  else { console.warn('unknown magic, trying NG'); return parsePcapNG(buffer); }
+
+  const lt = v.getUint32(20,le);
+  const pkts=[]; let off=24;
+  while(off+16<=buffer.byteLength){
+    const sec=v.getUint32(off,le),usec=v.getUint32(off+4,le),cap=v.getUint32(off+8,le),orig=v.getUint32(off+12,le);
+    off+=16;
+    if(!cap||cap>262144||off+cap>buffer.byteLength) break;
+    pkts.push({ts:sec+(ns?usec/1e9:usec/1e6),cap,orig,raw:new Uint8Array(buffer.slice(off,off+cap)),lt});
+    off+=cap;
+  }
+  return pkts;
+}
+function parsePcapNG(buffer) {
+  const v=new DataView(buffer); let off=0,le=true,lt=1,ifIdx=0;
+  const ifMap={}; const pkts=[];
+  while(off+12<=buffer.byteLength){
+    const bt=v.getUint32(off,le), bl=v.getUint32(off+4,le);
+    if(bl<12||off+bl>buffer.byteLength) break;
+    if(bt===0x0A0D0D0A){const bom=v.getUint32(off+8,true);le=(bom===0x1A2B3C4D);ifIdx=0;}
+    else if(bt===0x00000001){ifMap[ifIdx]=v.getUint16(off+8,le);lt=ifMap[ifIdx];ifIdx++;}
+    else if(bt===0x00000006){
+      const id=v.getUint32(off+8,le),hi=v.getUint32(off+12,le),lo=v.getUint32(off+16,le);
+      const cap=v.getUint32(off+20,le),orig=v.getUint32(off+24,le);
+      const pLT=ifMap[id]!==undefined?ifMap[id]:lt;
+      const slen=Math.min(cap,bl-28),doff=off+28;
+      if(slen>0&&doff+slen<=buffer.byteLength)
+        pkts.push({ts:(hi*4294967296+lo)/1e6,cap,orig,raw:new Uint8Array(buffer.slice(doff,doff+slen)),lt:pLT});
+    } else if(bt===0x00000002){
+      const hi=v.getUint32(off+12,le),lo=v.getUint32(off+16,le);
+      const cap=v.getUint32(off+20,le),orig=v.getUint32(off+24,le);
+      const slen=Math.min(cap,bl-28),doff=off+28;
+      if(slen>0&&doff+slen<=buffer.byteLength)
+        pkts.push({ts:(hi*4294967296+lo)/1e6,cap,orig,raw:new Uint8Array(buffer.slice(doff,doff+slen)),lt});
+    } else if(bt===0x00000003){
+      const orig=v.getUint32(off+8,le),slen=Math.min(orig,bl-16);
+      if(slen>0) pkts.push({ts:0,cap:slen,orig,raw:new Uint8Array(buffer.slice(off+12,off+12+slen)),lt});
+    }
+    off+=bl;
+  }
+  return pkts;
+}
+
+// ════════════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════════════
+const u8=(a,i)=>a[i]||0;
+const u16=(a,i)=>((a[i]||0)<<8)|(a[i+1]||0);
+const u32=(a,i)=>(((a[i]||0)<<24)|((a[i+1]||0)<<16)|((a[i+2]||0)<<8)|(a[i+3]||0))>>>0;
+const hx=(v,n=2)=>v.toString(16).padStart(n,'0');
+const mac=(a,i)=>[0,1,2,3,4,5].map(x=>hx(a[i+x]||0)).join(':');
+const ip4=(a,i)=>`${a[i]}.${a[i+1]}.${a[i+2]}.${a[i+3]}`;
+const ip6=(a,i)=>{let p=[];for(let k=0;k<16;k+=2)p.push(((a[i+k]||0)*256+(a[i+k+1]||0)).toString(16).padStart(4,'0'));return p.join(':');}
+const txt=(a,o,l)=>new TextDecoder('utf-8',{fatal:false}).decode(a.slice(o,o+l));
+const esc=(s)=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function tcpFlags(f){const a=[];if(f&2)a.push('SYN');if(f&16)a.push('ACK');if(f&8)a.push('PSH');if(f&1)a.push('FIN');if(f&4)a.push('RST');if(f&32)a.push('URG');return a.length?a.join('|'):'—';}
+function fmtB(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'K';return(b/1048576).toFixed(2)+'M';}
+function fmtDur(s){if(s<1)return(s*1000).toFixed(0)+'ms';if(s<60)return s.toFixed(2)+'s';return Math.floor(s/60)+'m'+(s%60|0)+'s';}
+
+// ════════════════════════════════════════════════════════
+//  DISSECTOR ENGINE
+// ════════════════════════════════════════════════════════
+function dissect(raw, lt) {
+  const r={src:'?',dst:'?',proto:'Other',info:'',layers:{},suspicions:[],suspicious:false,capLen:raw.length};
+  let netOff=0, etype=0;
+
+  // — Ethernet (lt=1) / Loopback (lt=0) / RawIP (lt=101) / Linux SLL (lt=113)
+  if(lt===1||lt===227){
+    if(raw.length<14) return r;
+    r.layers.eth={dstMAC:mac(raw,0),srcMAC:mac(raw,6),etherType:'0x'+u16(raw,12).toString(16).padStart(4,'0')};
+    etype=u16(raw,12); netOff=14;
+    // 802.1Q
+    if(etype===0x8100||etype===0x88A8){
+      r.layers.vlan={vlanID:u16(raw,14)&0x0FFF,pcp:(u8(raw,14)>>5)&0x7,dei:(u8(raw,14)>>4)&1};
+      etype=u16(raw,16); netOff=18;
+    }
+    // LLDP
+    if(etype===0x88CC){
+      r.proto='LLDP'; r.info='Link Layer Discovery Protocol';
+      r.layers.lldp=dissectLLDP(raw,14); return r;
+    }
+    // LACP
+    if(etype===0x8809){const d=dissectLACP(raw,netOff);if(d){r.proto='LACP';r.layers.lacp=d;r.info=d.summary;r.src=d.actorSystemID||'?';r.dst='01:80:C2:00:00:02';return r;}}
+    // PTP over Ethernet
+    if(etype===0x88F7){const d=dissectPTP(raw,netOff);if(d){r.proto='PTP';r.layers.ptp=d;r.info=d.summary;return r;}}
+    // CDP (Cisco, SNAP)
+    if(etype===0x2000||(u16(raw,12)<=1500&&u8(raw,17)===0x2000)){const d=dissectCDP(raw,netOff+8);if(d){r.proto='CDP';r.layers.cdp=d;r.info=d.summary;return r;}}
+    // STP
+    if(etype===0x0026||u16(raw,12)<=1500){
+      const dsap=u8(raw,14);
+      if(dsap===0x42){const d=dissectSTPFull(raw,netOff+3);if(d){r.proto='STP';r.layers.stp=d;r.info=d.summary;return r;}
+        r.proto='STP';r.info='Spanning Tree Protocol';r.layers.stp={bpduType:u8(raw,18)};return r;}
+    }
+    // MPLS
+    if(etype===0x8847||etype===0x8848){
+      r.proto='MPLS';
+      const lbl=(u32(raw,14)>>12)&0xFFFFF,tc=(u8(raw,16)>>1)&7,s=u8(raw,16)&1,ttl=u8(raw,17);
+      r.layers.mpls={label:lbl,TC:tc,S:s,TTL:ttl};
+      r.info=`Label=${lbl} TTL=${ttl}`; return r;
+    }
+    // PPPoE
+    if(etype===0x8864||etype===0x8863){
+      r.proto='PPPoE'; r.info=etype===0x8863?'PPPoE Discovery':'PPPoE Session';
+      r.layers.pppoe={code:u8(raw,15),sessionID:u16(raw,16)};
+      return r;
+    }
+  } else if(lt===0){
+    const fam=u32(raw,0);
+    etype=(fam===2)?0x0800:(fam===24||fam===28||fam===30)?0x86DD:0;
+    netOff=4;
+  } else if(lt===101){
+    etype=(raw[0]>>4===6)?0x86DD:0x0800; netOff=0;
+  } else if(lt===113){ // Linux cooked SLL
+    etype=u16(raw,14); netOff=16;
+  }
+
+  // — ARP
+  if(etype===0x0806){
+    r.proto='ARP';
+    const op=u16(raw,netOff+6),spa=ip4(raw,netOff+14),tpa=ip4(raw,netOff+24);
+    r.src=spa;r.dst=tpa;
+    r.layers.arp={operation:op===1?'Request (1)':'Reply (2)',senderMAC:mac(raw,netOff+8),senderIP:spa,targetMAC:mac(raw,netOff+18),targetIP:tpa};
+    r.info=op===1?`Who has ${tpa}? Tell ${spa}`:`${spa} is at ${r.layers.arp.senderMAC}`;
+    if(op===1) r.suspicions.push({level:'low',msg:'ARP request — monitor for ARP scan'});
+    return r;
+  }
+
+  // — IPv4
+  if(etype===0x0800){
+    if(raw.length<netOff+20) return r;
+    const ihl=(u8(raw,netOff)&0xF)*4,ver=4;
+    const dscp=u8(raw,netOff+1)>>2,ecn=u8(raw,netOff+1)&3;
+    const total=u16(raw,netOff+2),id=u16(raw,netOff+4);
+    const flagBits=(u16(raw,netOff+6)>>13)&7,frag=u16(raw,netOff+6)&0x1FFF;
+    const ttl=u8(raw,netOff+8),ipProto=u8(raw,netOff+9);
+    const srcIP=ip4(raw,netOff+12),dstIP=ip4(raw,netOff+16);
+    r.src=srcIP;r.dst=dstIP;
+    r.layers.ipv4={version:4,IHL:ihl+'B',DSCP:dscp,ECN:ecn,totalLength:total,
+      ID:'0x'+hx(id,4),flags:`DF:${(flagBits>>1)&1} MF:${flagBits&1}`,fragOffset:frag,TTL:ttl,protocol:ipProto,srcIP,dstIP};
+    if(ttl<=1) r.suspicions.push({level:'med',msg:`TTL=${ttl} — traceroute or routing loop`});
+    if(frag>0) r.suspicions.push({level:'med',msg:'IP fragment — possible evasion'});
+    // Private range check
+    const isPriv=(ip)=>/^(10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.)/.test(ip);
+    if(!isPriv(dstIP)&&!dstIP.startsWith('224.')&&!dstIP.startsWith('255.'))
+      r.layers.ipv4.dstType='Public';
+
+    const l4=netOff+ihl;
+    // — TCP
+    if(ipProto===6) dissectTCP(raw,l4,r,ttl);
+    // — UDP
+    else if(ipProto===17) dissectUDP(raw,l4,r);
+    // — ICMP
+    else if(ipProto===1) dissectICMP(raw,l4,r,ttl);
+    // — ICMPv6 (shouldn't appear in IPv4 but handle gracefully)
+    else if(ipProto===58) {r.proto='ICMPv6';r.info='ICMPv6 in IPv4';}
+    // — Named IP protocols
+    else {
+      const pm={2:'IGMP',6:'TCP',17:'UDP',41:'IPv6-in-IPv4',46:'RSVP',47:'GRE',50:'ESP',51:'AH',58:'ICMPv6',89:'OSPF',103:'PIM',112:'VRRP',132:'SCTP'};
+      r.proto=pm[ipProto]||`IPv4-${ipProto}`;
+      r.info=`Protocol ${ipProto}`;
+      if(ipProto===47) {r.layers.gre={key:'0x'+hx(u16(raw,l4),4),proto:'0x'+hx(u16(raw,l4+2),4)};}
+      if(ipProto===50) {r.layers.esp={spi:'0x'+hx(u32(raw,l4),8),seq:u32(raw,l4+4)};r.info=`ESP SPI=0x${hx(u32(raw,l4),8)}`;}
+      if(ipProto===51) {r.layers.ah={spi:'0x'+hx(u32(raw,l4+4),8),seq:u32(raw,l4+8)};r.info=`AH SPI=0x${hx(u32(raw,l4+4),8)}`;}
+      if(ipProto===46) dissectRSVP(raw,l4,r);
+      if(ipProto===89){const d=dissectOSPF(raw,l4);if(d){r.layers.ospf=d;r.info=d.summary;}}
+      if(ipProto===132){const d=dissectSCTP(raw,l4);if(d){r.layers.sctp=d;r.info=d.summary;
+        r.src+=':'+d.srcPort;r.dst+=':'+d.dstPort;
+        // SCTP payload protocol sniffing
+        if(d.firstChunk&&d.firstChunk.ppid){
+          const ppid=d.firstChunk.ppid;
+          if(ppid===46)r.proto='Diameter/SCTP';
+          else if(ppid===3)r.proto='SCTP-M3UA';
+          else if(ppid===18)r.proto='SCTP-S1AP';
+        }
+      }}
+    }
+    return r;
+  }
+
+  // — IPv6
+  if(etype===0x86DD){
+    if(raw.length<netOff+40) return r;
+    const tc=u8(raw,netOff+1),fl=(u32(raw,netOff)&0xFFFFF),plen=u16(raw,netOff+4),nh=u8(raw,netOff+6),hl=u8(raw,netOff+7);
+    const s6=ip6(raw,netOff+8),d6=ip6(raw,netOff+24);
+    r.src=s6;r.dst=d6;
+    r.layers.ipv6={version:6,trafficClass:tc,flowLabel:'0x'+fl.toString(16),payloadLen:plen,nextHeader:nh,hopLimit:hl,srcIP:s6,dstIP:d6};
+    const l4=netOff+40;
+    if(nh===6) dissectTCP(raw,l4,r,hl);
+    else if(nh===17) dissectUDP(raw,l4,r);
+    else if(nh===58) dissectICMPv6(raw,l4,r);
+    else {
+      const pm={41:'IPv6-in-IPv6',43:'IPv6-Route',44:'IPv6-Frag',50:'ESP',51:'AH',59:'IPv6-NoNext',60:'IPv6-Opts'};
+      r.proto=pm[nh]||`IPv6-NH${nh}`; r.info=`Next Header ${nh}`;
+    }
+    return r;
+  }
+
+  r.proto='Other'; r.info=`EtherType 0x${hx(etype,4)}`;
+  return r;
+}
+
+// — TCP
+function dissectTCP(raw,off,r,ttl){
+  if(raw.length<off+20){r.proto='TCP';return;}
+  const sp=u16(raw,off),dp=u16(raw,off+2),seq=u32(raw,off+4),ack=u32(raw,off+8);
+  const doff=(u8(raw,off+12)>>4)*4,fl=u8(raw,off+13),win=u16(raw,off+14),cksum=u16(raw,off+16);
+  const urgent=u16(raw,off+18);
+  r.proto='TCP';
+  r.src+=(r.src.includes(':')&&!r.src.includes('.'))?`[${sp}]`:`:${sp}`;
+  r.dst+=(r.dst.includes(':')&&!r.dst.includes('.'))?`[${dp}]`:`:${dp}`;
+  r.layers.tcp={srcPort:sp,dstPort:dp,sequence:seq,acknowledgement:ack,dataOffset:doff+'B',
+    flags:tcpFlags(fl),window:win,checksum:'0x'+hx(cksum,4),urgentPtr:urgent,
+    payloadLen:Math.max(0,raw.length-off-doff)};
+  const pay=raw.slice(off+doff);
+  const stxt=txt(pay,0,Math.min(pay.length,300));
+  // Security
+  if((fl&0x3F)===0) r.suspicions.push({level:'med',msg:'TCP NULL scan — all flags cleared'});
+  if((fl&0x3F)===0x3F) r.suspicions.push({level:'med',msg:'TCP XMAS scan — all flags set'});
+  if((fl&2)&&!(fl&16)) r.suspicions.push({level:'low',msg:'SYN-only — possible port scan'});
+  if(fl&4) r.suspicions.push({level:'med',msg:'RST — connection reset / scan probe'});
+  // App layer sniffing
+  const p=(a,b)=>sp===a||dp===a||sp===b||dp===b;
+  if(p(80,8080)||p(8443,3000)){
+    r.proto='HTTP'; const ln=(stxt.split('\r\n')[0]||stxt.split('\n')[0]||'').substring(0,80);
+    r.info=ln; r.layers.http=dissectHTTP(stxt,pay);
+    if(/password|passwd|token|secret|Authorization/i.test(stxt))
+      r.suspicions.push({level:'high',msg:'HTTP: sensitive credential keyword in cleartext'});
+  } else if(p(443,8443)||p(636,0)||p(989,0)||p(990,0)||p(5061,0)){
+    r.proto='TLS'; r.layers.tls=dissectTLS(raw,off+doff);
+    r.info=r.layers.tls.info||`TLS ${sp}→${dp}`;
+    // Cipher audit on ClientHello
+    const ca=dissectTLSCiphers(raw,off+doff);
+    if(ca){r.layers.tlsCiphers=ca;
+      if(ca.weakCiphers&&ca.weakCiphers!=='None') r.suspicions.push({level:'high',msg:`Weak TLS ciphers offered: ${ca.weakCiphers.substring(0,60)}`});
+      if(!ca.hasPFS) r.suspicions.push({level:'med',msg:'TLS: no Perfect Forward Secrecy cipher offered'});
+      if(!ca.hasTLS13) r.suspicions.push({level:'low',msg:`TLS max version: ${ca.clientVersion} (TLS 1.3 not offered)`});
+    }
+  } else if(p(22,2222)){
+    r.proto='SSH'; r.info=stxt.startsWith('SSH')?stxt.split('\r\n')[0].substring(0,60):`SSH ${sp}→${dp}`;
+    if(stxt.startsWith('SSH')) r.layers.ssh={banner:stxt.split('\r\n')[0].substring(0,80)};
+  } else if(p(21,990)){
+    r.proto='FTP'; const ln=(stxt.split('\r\n')[0]||'').substring(0,72);
+    r.info=ln; r.layers.ftp={command:ln,direction:sp===21?'Server→Client':'Client→Server'};
+    if(/^USER /i.test(ln.trim())) {r.layers.ftp.username=ln.trim().split(' ')[1];r.suspicions.push({level:'high',msg:`FTP USER cleartext: ${r.layers.ftp.username}`});}
+    if(/^PASS /i.test(ln.trim())) {r.layers.ftp.password='*** cleartext';r.suspicions.push({level:'high',msg:'FTP PASS — password in plaintext!'});}
+    if(/^(RETR|STOR|LIST|NLST) /i.test(ln.trim())) r.layers.ftp.file=ln.trim().split(' ').slice(1).join(' ');
+  } else if(p(20,0)){
+    r.proto='FTP-Data'; r.info=`FTP data — ${pay.length}B`;
+  } else if(p(23,0)){
+    r.proto='Telnet'; r.info='Telnet session';
+    r.suspicions.push({level:'high',msg:'Telnet — plaintext interactive session'});
+  } else if(p(25,587)||p(465,0)){
+    r.proto='SMTP'; const ln=stxt.split('\r\n')[0].substring(0,60); r.info=ln;
+    r.layers.smtp={command:ln,direction:sp===25||sp===465||sp===587?'Server':'Client'};
+    if(/^AUTH|^USER|^PASS/i.test(stxt.trim()))
+      r.suspicions.push({level:'high',msg:'SMTP AUTH credentials in cleartext'});
+  } else if(p(110,995)){
+    r.proto='POP3'; const ln=stxt.split('\r\n')[0].substring(0,70); r.info=ln;
+    if(/^USER |^PASS /i.test(stxt.trim()))
+      r.suspicions.push({level:'high',msg:'POP3 credentials in cleartext'});
+  } else if(p(143,993)){
+    r.proto='IMAP'; const ln=stxt.split('\r\n')[0].substring(0,70); r.info=ln;
+    if(/LOGIN|AUTHENTICATE/i.test(stxt))
+      r.suspicions.push({level:'high',msg:'IMAP LOGIN in cleartext'});
+  } else if(p(179,0)){
+    r.proto='BGP'; r.layers.bgp=dissectBGPFull(raw,off+doff); r.info=r.layers.bgp?r.layers.bgp.summary:`BGP ${sp}→${dp}`;
+    if(r.layers.bgp&&r.layers.bgp.errorCode) r.suspicions.push({level:'high',msg:`BGP NOTIFICATION: ${r.layers.bgp.errorCode}`});
+  } else if(p(646,0)){
+    r.proto='LDP'; r.info=`LDP ${sp}→${dp}`;
+  } else if(p(5060,5061)){
+    r.proto='SIP'; r.layers.sip=dissectSIP(stxt); r.info=r.layers.sip.summary||`SIP ${sp}→${dp}`;
+  } else if(p(3868,0)||p(3869,0)){
+    const d=dissectDiameter(raw,off+doff);
+    if(d){r.proto='Diameter';r.layers.diameter=d;r.info=d.summary;}
+    else{r.proto='Diameter';r.info=`Diameter ${sp}→${dp}`;}
+  } else if(p(49,0)){
+    r.proto='TACACS+'; r.info=`TACACS+ ${sp}→${dp}`;
+    r.suspicions.push({level:'low',msg:'TACACS+ AAA traffic detected'});
+  } else if(p(102,0)){
+    r.proto='TPKT'; r.info=`TPKT/Q.931 ${sp}→${dp}`;
+  } else if(dissectIoTTCP(raw,off,sp,dp,r,stxt)){
+    // IoT/OT handled
+  } else if(!r.info){
+    r.info=`${tcpFlags(fl)} Seq=${seq} Ack=${ack} Win=${win}`;
+  }
+}
+
+// — UDP
+function dissectUDP(raw,off,r){
+  if(raw.length<off+8){r.proto='UDP';return;}
+  const sp=u16(raw,off),dp=u16(raw,off+2),len=u16(raw,off+4),cksum=u16(raw,off+6);
+  r.proto='UDP';
+  r.src+=`:${sp}`; r.dst+=`:${dp}`;
+  r.layers.udp={srcPort:sp,dstPort:dp,length:len,checksum:'0x'+hx(cksum,4)};
+  const p=(a,b=a)=>sp===a||dp===a||(b&&(sp===b||dp===b));
+  if(p(53))        { r.proto='DNS'; const d=dissectDNS(raw,off+8); r.layers.dns=d; r.info=d.summary||`DNS ${sp}→${dp}`; if(d.suspicion) r.suspicions.push({level:'med',msg:'DNS tunneling — anomalous query length'}); }
+  else if(p(67,68)){ r.proto='DHCP'; const d=dissectDHCP(raw,off+8); r.layers.dhcp=d; r.info=d.summary||'DHCP'; }
+  else if(p(546,547)){r.proto='DHCPv6'; r.info='DHCPv6 '+(dp===547?'→Server':'→Client');}
+  else if(p(69))   { r.proto='TFTP'; const op=u16(raw,off+8); r.layers.tftp={opcode:['','Read','Write','Data','Ack','Error'][op]||op}; r.info=`TFTP ${r.layers.tftp.opcode}`; }
+  else if(p(123))  { r.proto='NTP'; r.layers.ntp=dissectNTP(raw,off+8); r.info=r.layers.ntp.summary||'NTP'; }
+  else if(p(161,162)){ r.proto='SNMP'; r.info=`SNMP ${sp===162||dp===162?'Trap':'Query'}`; r.suspicions.push({level:'low',msg:'SNMP — verify community string is not default'}); }
+  else if(p(514))  { r.proto='Syslog'; const d=dissectSyslog(raw,off+8); r.layers.syslog=d; r.info=d.summary||'Syslog'; }
+  else if(p(520))  { r.proto='RIP'; r.layers.rip={command:u8(raw,off+8)===1?'Request':'Response',version:u8(raw,off+9)}; r.info=`RIP v${r.layers.rip.version} ${r.layers.rip.command}`; }
+  else if(p(521))  { r.proto='RIPng'; r.info='RIPng (IPv6 RIP)'; }
+  else if(p(1812,1813)){ r.proto='RADIUS'; const d=dissectRADIUS(raw,off+8); r.layers.radius=d; r.info=d.summary||'RADIUS'; }
+  else if(p(1645,1646)){ r.proto='RADIUS'; r.info='RADIUS (legacy port)'; }
+  else if(p(500,4500)){ r.proto='IKE'; const d=dissectIKE(raw,off+8); r.layers.ike=d; r.info=d.summary||'IKE/ISAKMP'; }
+  else if(p(4789)) { r.proto='VXLAN'; const vni=(u32(raw,off+8+4)>>8)&0xFFFFFF; r.layers.vxlan={VNI:vni}; r.info=`VXLAN VNI=${vni}`; }
+  else if(p(5353)) { r.proto='mDNS'; const d=dissectDNS(raw,off+8); r.info=d.summary||'mDNS'; }
+  else if(p(1900)) { r.proto='SSDP'; const stxt=txt(raw,off+8,Math.min(100,raw.length-off-8)); r.info=stxt.split('\r\n')[0].substring(0,60)||'SSDP'; }
+  else if(p(5060,5061)){ r.proto='SIP'; const st=txt(raw,off+8,Math.min(300,raw.length-off-8)); r.layers.sip=dissectSIP(st); r.info=r.layers.sip.summary||'SIP'; }
+  else if(p(2123)){const d=dissectGTPv2(raw,off+8);if(d){r.proto='GTP-C';r.layers.gtpv2=d;r.info=d.summary;}else{r.proto='GTP-C';r.info='GTPv2 Control';}}
+  else if(p(2152)){r.proto='GTP-U';r.info=`GTP-U TEID=0x${hx(u32(raw,off+12),8)}`;}
+  else if(p(8805)){const d=dissectPFCP(raw,off+8);if(d){r.proto='PFCP';r.layers.pfcp=d;r.info=d.summary;}}
+  else if(p(2055)||p(4739)||p(9995)){const d=dissectNetFlow(raw,off+8);if(d){r.proto='NetFlow';r.layers.netflow=d;r.info=d.summary;}}
+  else if(p(5004)||p(5005)){const d=dissectRTCP(raw,off+8);if(d){r.proto='RTCP';r.layers.rtcp=d;r.info=d.summary;}}
+  else if(p(319)||p(320)){const d=dissectPTP(raw,off+8);if(d){r.proto='PTP';r.layers.ptp=d;r.info=d.summary;}}
+  else if(p(3784,3785)){ r.proto='BFD'; r.info='Bidirectional Forwarding Detection'; }
+  else {
+    // IoT/OT protocols
+    if(dissectIoTUDP(raw,off,sp,dp,r)) return;
+    // RTP heuristic: even port, payload type field in valid range, version=2
+    if(raw.length>off+12){
+      const b0=u8(raw,off+8),ver=(b0>>6)&3,pt=u8(raw,off+9)&0x7F;
+      if(ver===2&&pt<128&&pt!==72&&pt!==73&&(sp>16383&&sp<32768)&&sp%2===0){
+        r.proto='RTP'; const seq2=u16(raw,off+10),ts2=u32(raw,off+12),ssrc=u32(raw,off+16);
+        r.layers.rtp={version:2,payloadType:pt,sequence:seq2,timestamp:ts2,SSRC:'0x'+hx(ssrc,8)};
+        r.info=`RTP PT=${pt} Seq=${seq2} SSRC=0x${hx(ssrc,8)}`; return;
+      }
+    }
+    r.info=`UDP ${sp}→${dp} len=${len}`;
+  }
+}
+
+// — ICMP
+function dissectICMP(raw,off,r,ttl){
+  if(raw.length<off+4){r.proto='ICMP';return;}
+  const type=u8(raw,off),code=u8(raw,off+1),cksum=u16(raw,off+2);
+  const TN={0:'Echo Reply',3:'Destination Unreachable',4:'Source Quench',5:'Redirect',8:'Echo Request',9:'Router Advertisement',10:'Router Solicitation',11:'Time Exceeded',12:'Parameter Problem',13:'Timestamp',14:'Timestamp Reply',30:'Traceroute'};
+  const UC={0:'Net',1:'Host',2:'Protocol',3:'Port',4:'Frag Needed',5:'Src Route Failed'};
+  const TC={0:'TTL exceeded in transit',1:'Fragment reassembly time exceeded'};
+  r.proto='ICMP';
+  r.layers.icmp={type:`${type} (${TN[type]||'Unknown'})`,code:type===3?`${code} (${UC[code]||code})`:type===11?`${code} (${TC[code]||code})`:code,checksum:'0x'+hx(cksum,4)};
+  r.info=TN[type]||`ICMP Type ${type}`;
+  if(type===8||type===0){
+    const id=u16(raw,off+4),seq=u16(raw,off+6),dlen=raw.length-off-8;
+    r.layers.icmp.identifier='0x'+hx(id,4); r.layers.icmp.sequence=seq; r.layers.icmp.dataLength=dlen+'B';
+    r.info=type===8?`Echo request  id=0x${hx(id,4)} seq=${seq} ttl=${ttl}`:`Echo reply    id=0x${hx(id,4)} seq=${seq} ttl=${ttl}`;
+    if(dlen>200) r.suspicions.push({level:'med',msg:`Large ICMP payload (${dlen}B) — possible covert channel`});
+  } else if(type===3){r.info=`Dest Unreachable: ${UC[code]||code}`;r.suspicions.push({level:'med',msg:`ICMP Unreachable: ${UC[code]||code}`});}
+  else if(type===11){r.info=`Time Exceeded: ${TC[code]||code}`;r.suspicions.push({level:'low',msg:'ICMP Time Exceeded — traceroute?'});}
+  else if(type===5){r.info='ICMP Redirect — routing change';r.suspicions.push({level:'high',msg:'ICMP Redirect — possible MITM/routing hijack'});}
+}
+
+// — ICMPv6
+function dissectICMPv6(raw,off,r){
+  if(raw.length<off+4){r.proto='ICMPv6';return;}
+  const type=u8(raw,off),code=u8(raw,off+1);
+  const TN={1:'Destination Unreachable',2:'Packet Too Big',3:'Time Exceeded',4:'Parameter Problem',128:'Echo Request',129:'Echo Reply',133:'Router Solicitation',134:'Router Advertisement',135:'Neighbor Solicitation',136:'Neighbor Advertisement',137:'Redirect'};
+  r.proto='ICMPv6'; r.info=TN[type]||`ICMPv6 Type ${type}`;
+  r.layers.icmpv6={type:`${type} (${TN[type]||'?'})`,code};
+  if(type===135||type===136){const tgt=ip6(raw,off+8);r.layers.icmpv6.target=tgt;r.info+=` → ${tgt}`;}
+  if(type===137) r.suspicions.push({level:'high',msg:'ICMPv6 Redirect — possible MITM'});
+}
+
+// ════════════════════════════════════════════════════════
+//  APP-LAYER DISSECTORS
+// ════════════════════════════════════════════════════════
+function dissectHTTP(stxt,pay){
+  const lines=stxt.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lines.length) return {};
+  const h={},obj={requestLine:lines[0]};
+  for(let i=1;i<lines.length;i++){if(!lines[i])break;const ci=lines[i].indexOf(':');if(ci>0)h[lines[i].substring(0,ci).trim()]=lines[i].substring(ci+1).trim();}
+  if(h['Host'])          obj.host=h['Host'];
+  if(h['Content-Type'])  obj.contentType=h['Content-Type'];
+  if(h['Content-Length'])obj.contentLength=h['Content-Length'];
+  if(h['User-Agent'])    obj.userAgent=h['User-Agent'].substring(0,80);
+  if(h['Authorization']) obj.authorization='*** (present)';
+  if(h['Cookie'])        obj.cookie='*** (present)';
+  const m=lines[0].match(/^(GET|POST|PUT|DELETE|HEAD|OPTIONS|PATCH|HTTP\/[\d.]+)/);
+  if(m) obj.method=m[1];
+  return obj;
+}
+
+function dissectTLS(raw,off){
+  if(raw.length<off+5) return {info:'TLS (short)'};
+  const ct=u8(raw,off),ver=u16(raw,off+1),len=u16(raw,off+3);
+  const CTP={20:'ChangeCipherSpec',21:'Alert',22:'Handshake',23:'AppData',24:'Heartbeat'};
+  const VER={0x0301:'TLS 1.0',0x0302:'TLS 1.1',0x0303:'TLS 1.2',0x0304:'TLS 1.3',0x0300:'SSL 3.0'};
+  const obj={contentType:CTP[ct]||ct,version:VER[ver]||'0x'+hx(ver,4),recordLen:len};
+  obj.info=`${CTP[ct]||'?'} (${VER[ver]||'?'}) len=${len}`;
+  if(ct===22&&raw.length>off+5){
+    const ht=u8(raw,off+5);
+    const HT={1:'ClientHello',2:'ServerHello',4:'NewSessionTicket',8:'EncryptedExtensions',11:'Certificate',12:'ServerKeyExchange',13:'CertificateRequest',14:'ServerHelloDone',15:'CertificateVerify',16:'ClientKeyExchange',20:'Finished'};
+    obj.handshakeType=HT[ht]||`Type ${ht}`;
+    if(ht===1){const sni=extractSNI(raw,off+5);if(sni){obj.SNI=sni;obj.info+=` SNI=${sni}`;}}
+  }
+  return obj;
+}
+function extractSNI(raw,off){
+  try{
+    for(let i=off;i<Math.min(raw.length-5,off+600);i++){
+      if(u16(raw,i)===0x0000&&u8(raw,i+2)===0x00){
+        const nlen=u16(raw,i+5);
+        if(nlen>0&&nlen<256&&i+7+nlen<=raw.length) return txt(raw,i+7,nlen);
+      }
+    }
+  }catch(e){}
+  return null;
+}
+
+function dissectDNS(raw,off){
+  if(raw.length<off+12) return {summary:'DNS (short)'};
+  const id=u16(raw,off),fl=u16(raw,off+2);
+  const qr=(fl>>15)&1,op=(fl>>11)&0xF,aa=(fl>>10)&1,tc=(fl>>9)&1,rd=(fl>>8)&1,ra=(fl>>7)&1,rcode=fl&0xF;
+  const qdcnt=u16(raw,off+4),ancnt=u16(raw,off+6);
+  const obj={id:'0x'+hx(id,4),type:qr?'Response':'Query',opcode:op,authoritative:aa,truncated:tc,recursionDesired:rd,recursionAvail:ra,rcode,questions:qdcnt,answers:ancnt};
+  try{
+    let p=off+12,name='';
+    while(p<raw.length&&raw[p]!==0){
+      if((raw[p]&0xC0)===0xC0){p+=2;break;}
+      const l=raw[p++];name+=(name?'.':'')+txt(raw,p,l);p+=l;
+    }
+    if(raw[p]===0)p++;
+    const qt=u16(raw,p);
+    const QT={1:'A',2:'NS',5:'CNAME',6:'SOA',12:'PTR',15:'MX',16:'TXT',28:'AAAA',33:'SRV',255:'ANY',257:'CAA'};
+    obj.queryName=name; obj.queryType=QT[qt]||qt;
+    obj.summary=`${qr?'Response':'Query'}: ${name} ${QT[qt]||qt}`;
+    if(name.length>60) obj.suspicion=true;
+  }catch(e){}
+  return obj;
+}
+
+function dissectDHCP(raw,off){
+  if(raw.length<off+240) return {summary:'DHCP (short)'};
+  const op=u8(raw,off),htype=u8(raw,off+1),hlen=u8(raw,off+2),hops=u8(raw,off+3);
+  const xid=u32(raw,off+4),secs=u16(raw,off+8),flags=u16(raw,off+10);
+  const ci=ip4(raw,off+12),yi=ip4(raw,off+16),si=ip4(raw,off+20),gi=ip4(raw,off+24);
+  const ch=[0,1,2,3,4,5].map(i=>(raw[off+28+i]||0).toString(16).padStart(2,'0')).join(':');
+  if(u32(raw,off+236)!==0x63825363) return {summary:'DHCP (bad cookie)',transactionID:'0x'+hx(xid,8),clientMAC:ch};
+  const MT={1:'DISCOVER',2:'OFFER',3:'REQUEST',4:'DECLINE',5:'ACK',6:'NAK',7:'RELEASE',8:'INFORM'};
+  let mt=null,j=off+240;
+  const obj={messageType:'?',transactionID:'0x'+hx(xid,8),clientIP:ci==='0.0.0.0'?'—':ci,
+    yourIP:yi==='0.0.0.0'?'—':yi,serverIP:si==='0.0.0.0'?'—':si,clientMAC:ch};
+  while(j<raw.length){
+    const c=u8(raw,j);j++;
+    if(c===255)break;if(c===0)continue;
+    const l=u8(raw,j);j++;
+    const v=raw.slice(j,j+l);j+=l;
+    if(c===53){mt=u8(v,0);obj.dhcpMsgType=`${MT[mt]||'?'} (${mt})`;}
+    else if(c===54)obj.serverID=ip4(v,0);
+    else if(c===50)obj.requestedIP=ip4(v,0);
+    else if(c===51){const s=u32(v,0);obj.leaseTime=`${s}s (${Math.round(s/3600)}h)`;}
+    else if(c===1)obj.subnetMask=ip4(v,0);
+    else if(c===3)obj.router=ip4(v,0);
+    else if(c===6)obj.dnsServers=ip4(v,0)+(l>4?', '+ip4(v,4):'');
+    else if(c===12)obj.hostname=txt(v,0,l);
+    else if(c===15)obj.domainName=txt(v,0,l);
+    else if(c===60)obj.vendorClass=txt(v,0,Math.min(l,40));
+  }
+  const sum={1:`DHCP Discover — MAC ${ch}`,2:`DHCP Offer — ${obj.yourIP} to ${ch}`,3:`DHCP Request — ${obj.requestedIP||obj.clientIP}`,5:`DHCP ACK — ${obj.yourIP} assigned`,6:'DHCP NAK — request denied',7:`DHCP Release — ${ci}`};
+  obj.summary=sum[mt]||`DHCP ${MT[mt]||'?'}`;
+  return obj;
+}
+
+function dissectNTP(raw,off){
+  if(raw.length<off+48) return {summary:'NTP (short)'};
+  const b0=u8(raw,off),li=(b0>>6)&3,ver=(b0>>3)&7,mode=b0&7;
+  const stratum=u8(raw,off+1),poll=u8(raw,off+2),prec=u8(raw,off+3)-256;
+  const LI={0:'No warning',1:'61-sec min',2:'59-sec min',3:'Not synced'};
+  const MODE={1:'Symmetric Active',2:'Symmetric Passive',3:'Client',4:'Server',5:'Broadcast',6:'Control',7:'Private'};
+  return {leapIndicator:LI[li]||li,version:ver,mode:`${MODE[mode]||mode} (${mode})`,stratum,pollInterval:`${Math.pow(2,poll).toFixed(0)}s`,precision:`${prec}s (2^${prec})`,
+    summary:`NTP v${ver} ${MODE[mode]||mode} stratum=${stratum}`};
+}
+
+function dissectSyslog(raw,off){
+  const msg=txt(raw,off,Math.min(raw.length-off,200));
+  const m=msg.match(/^<(\d+)>/);
+  if(!m) return {summary:'Syslog: '+msg.substring(0,60)};
+  const pri=parseInt(m[1]);
+  const fac=Math.floor(pri/8),sev=pri%8;
+  const FAC={0:'kern',1:'user',2:'mail',3:'daemon',4:'auth',5:'syslog',16:'local0',17:'local1',23:'local7'};
+  const SEV={0:'Emergency',1:'Alert',2:'Critical',3:'Error',4:'Warning',5:'Notice',6:'Info',7:'Debug'};
+  const body=msg.substring(m[0].length).trim();
+  return {priority:pri,facility:FAC[fac]||`fac${fac}`,severity:SEV[sev]||sev,message:body.substring(0,120),summary:`Syslog ${SEV[sev]||sev}: ${body.substring(0,60)}`};
+}
+
+function dissectRADIUS(raw,off){
+  if(raw.length<off+4) return {summary:'RADIUS (short)'};
+  const code=u8(raw,off),id=u8(raw,off+1),len=u16(raw,off+2);
+  const CODES={1:'Access-Request',2:'Access-Accept',3:'Access-Reject',4:'Accounting-Request',5:'Accounting-Response',11:'Access-Challenge',12:'Status-Server',13:'Status-Client'};
+  const cname=CODES[code]||`Code ${code}`;
+  const attrs={};let j=off+20;
+  while(j+2<=off+len&&j+2<=raw.length){
+    const atype=u8(raw,j),alen=u8(raw,j+1);if(alen<2||j+alen>raw.length)break;
+    const aval=raw.slice(j+2,j+alen);
+    if(atype===1) attrs.username=txt(aval,0,aval.length);
+    else if(atype===4) attrs.nasIP=ip4(aval,0);
+    else if(atype===5) attrs.nasPort=u32(aval,0);
+    j+=alen;
+  }
+  if(code===1&&attrs.username) attrs['⚠ Note']='Credentials in transit';
+  return {code:cname,identifier:id,length:len,...attrs,summary:`RADIUS ${cname} id=${id}${attrs.username?' user='+attrs.username:''}`};
+}
+
+function dissectIKE(raw,off){
+  if(raw.length<off+28) return {summary:'IKE (short)'};
+  const initSPI=hx(u32(raw,off),8)+hx(u32(raw,off+4),8);
+  const respSPI=hx(u32(raw,off+8),8)+hx(u32(raw,off+12),8);
+  const nextPay=u8(raw,off+16),ver=u8(raw,off+17),exType=u8(raw,off+18),flags=u8(raw,off+19);
+  const msgID=u32(raw,off+20),totLen=u32(raw,off+24);
+  const VER={0x20:'IKEv2',0x10:'IKEv1'};
+  const EX={34:'IKE_SA_INIT',35:'IKE_AUTH',36:'CREATE_CHILD_SA',37:'INFORMATIONAL'};
+  return {version:VER[ver]||`v${ver}`,exchange:EX[exType]||`Type ${exType}`,messageID:msgID,initiatorSPI:'0x'+initSPI,responderSPI:'0x'+respSPI,
+    summary:`IKE ${VER[ver]||''} ${EX[exType]||exType} id=${msgID}`};
+}
+
+function dissectBGP(raw,off){
+  if(raw.length<off+19) return {summary:'BGP (short)'};
+  const len=u16(raw,off+16),type=u8(raw,off+18);
+  const TYPES={1:'OPEN',2:'UPDATE',3:'NOTIFICATION',4:'KEEPALIVE',5:'ROUTE-REFRESH'};
+  const obj={messageType:TYPES[type]||`Type ${type}`,length:len};
+  if(type===1&&raw.length>off+29){obj.version=u8(raw,off+19);obj.ASN=u16(raw,off+20);obj.holdTime=u16(raw,off+22);obj.BGPID=ip4(raw,off+24);}
+  if(type===3&&raw.length>off+21){const EC={0:'Header Error',1:'OPEN Error',2:'UPDATE Error',3:'Hold Timer Expired',4:'FSM Error',5:'Cease'};obj.errorCode=EC[u8(raw,off+19)]||u8(raw,off+19);obj.errorSubcode=u8(raw,off+20);}
+  obj.summary=`BGP ${TYPES[type]||type}${obj.ASN?' AS='+obj.ASN:''}`;
+  return obj;
+}
+
+function dissectSIP(stxt){
+  const lines=stxt.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lines.length) return {summary:'SIP'};
+  const first=lines[0];
+  const headers={};
+  for(let i=1;i<Math.min(lines.length,20);i++){const ci=lines[i].indexOf(':');if(ci>0)headers[lines[i].substring(0,ci).trim().toLowerCase()]=lines[i].substring(ci+1).trim();}
+  const obj={requestLine:first};
+  if(headers['from'])   obj.from=headers['from'].substring(0,60);
+  if(headers['to'])     obj.to=headers['to'].substring(0,60);
+  if(headers['call-id'])obj.callID=headers['call-id'].substring(0,40);
+  if(headers['cseq'])   obj.cseq=headers['cseq'];
+  if(headers['contact'])obj.contact=headers['contact'].substring(0,60);
+  if(headers['content-type'])obj.contentType=headers['content-type'];
+  const isResp=/^SIP\//.test(first);
+  obj.direction=isResp?'Response':'Request';
+  obj.summary=first.substring(0,70);
+  return obj;
+}
+
+function dissectLLDP(raw,off){
+  const obj={};let j=off;
+  while(j+2<=raw.length){
+    const t=(u8(raw,j)>>1)&0x7F,l=((u8(raw,j)&1)<<8)|u8(raw,j+1);j+=2;
+    if(t===0)break;
+    const v=raw.slice(j,j+l);
+    if(t===1)obj.chassisID=txt(v,1,l-1);
+    else if(t===2)obj.portID=txt(v,1,l-1);
+    else if(t===3)obj.TTL=u16(v,0);
+    else if(t===4)obj.portDesc=txt(v,0,l);
+    else if(t===5)obj.systemName=txt(v,0,l);
+    else if(t===6)obj.systemDesc=txt(v,0,Math.min(l,60));
+    j+=l;
+    if(Object.keys(obj).length>=5)break;
+  }
+  obj.summary=`LLDP${obj.systemName?' from '+obj.systemName:obj.chassisID?' chassis='+obj.chassisID:''}`;
+  return obj;
+}
+
+function dissectRSVP(raw,off){
+  if(raw.length<off+4){r.proto='RSVP';r.info='RSVP';return;}
+  const ver=(u8(raw,off)>>4),flags=u8(raw,off)&0xF,type=u8(raw,off+1);
+  const TYPES={1:'Path',2:'Resv',3:'PathErr',4:'ResvErr',5:'PathTear',6:'ResvTear',7:'ResvConf'};
+  return {version:ver,messageType:TYPES[type]||type,summary:`RSVP ${TYPES[type]||type}`};
+}
+
+// ════════════════════════════════════════════════════════
+//  APP STATE
+// ════════════════════════════════════════════════════════
+let ALL=[], SHOWN=[], selIdx=-1, modeFilter='all', filterTxt='', activeProtos=new Set();
+
+// ════════════════════════════════════════════════════════
+//  FILE HANDLING
+// ════════════════════════════════════════════════════════
+function openNew(){document.getElementById('uploadScreen').style.display='flex';document.getElementById('app').classList.remove('on');document.getElementById('fi').click();}
+
+document.getElementById('fi').onchange=e=>{if(e.target.files[0])loadFile(e.target.files[0]);};
+const da=document.getElementById('dropArea');
+da.ondragover=e=>{e.preventDefault();da.classList.add('drag');};
+da.ondragleave=()=>da.classList.remove('drag');
+da.ondrop=e=>{e.preventDefault();da.classList.remove('drag');if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0]);};
+
+function showErr(msg){const b=document.getElementById('errBox');b.textContent=msg;b.style.display='block';}
+function setPB(pct,label){
+  const w=document.getElementById('pbWrap');w.style.display='flex';
+  document.getElementById('pbFill').style.width=pct+'%';
+  document.getElementById('pbLabel').textContent=label;
+}
+function hidePB(){document.getElementById('pbWrap').style.display='none';}
+
+function loadFile(file){
+  if(file.size>500*1024*1024&&!confirm(`Large file (${(file.size/1048576).toFixed(0)}MB) — continue?`))return;
+  document.getElementById('errBox').style.display='none';
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      setPB(30,'Parsing binary…');
+      const buf=e.target.result;
+      const hdr=new Uint8Array(buf,0,Math.min(8,buf.byteLength));
+      console.log('Header:',Array.from(hdr).map(b=>b.toString(16).padStart(2,'0')).join(' '));
+      const rawPkts=parsePcap(buf);
+      if(!rawPkts.length){
+        const hdx=Array.from(hdr).map(b=>b.toString(16).padStart(2,'0')).join(' ');
+        showErr(`0 packets parsed.\nFile: ${file.name} (${fmtB(file.size)})\nHeader bytes: ${hdx}\nSee browser console (F12) for details.`);
+        hidePB(); return;
+      }
+      setPB(60,'Dissecting protocols…');
+      ALL=rawPkts.map((p,i)=>{
+        try{const d=dissect(p.raw,p.lt);d.idx=i+1;d.ts=p.ts;d.rawData=p.raw;d.capLen=p.cap;d.suspicious=!!(d.suspicions&&d.suspicions.length);return d;}
+        catch(ex){return{idx:i+1,ts:p.ts,src:'?',dst:'?',proto:'Error',info:ex.message,layers:{},suspicions:[],suspicious:false,rawData:p.raw,capLen:p.cap};}
+      });
+      setPB(85,'Building UI…');
+      document.getElementById('fileName').textContent=file.name;
+      document.getElementById('fileSize').textContent=fmtB(file.size);
+      document.getElementById('filePill').style.display='flex';
+      document.getElementById('uploadScreen').style.display='none';
+      document.getElementById('app').classList.add('on');
+      buildAll();
+      setPB(100,'Done');
+      setTimeout(hidePB,600);
+    }catch(ex){console.error(ex);showErr('Parse error: '+ex.message);hidePB();}
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ════════════════════════════════════════════════════════
+//  BUILD UI
+// ════════════════════════════════════════════════════════
+const PCOL={TCP:'#4f8ef7',UDP:'#34d399',DNS:'#a78bfa',HTTP:'#2dd4bf',HTTPS:'#2dd4bf',TLS:'#f87171',
+  ICMP:'#fb923c',ICMPv6:'#f97316',ARP:'#fbbf24',DHCP:'#e879f9',DHCPv6:'#d946ef',
+  NTP:'#6ee7b7',FTP:'#f87171','FTP-Data':'#fca5a1',SMTP:'#fb7185',POP3:'#a78bfa',IMAP:'#818cf8',
+  SSH:'#34d399',Telnet:'#f87171',SNMP:'#fbbf24',mDNS:'#2dd4bf',SSDP:'#0d9488',
+  BGP:'#60a5fa',OSPF:'#3b82f6',RIP:'#6366f1',RIPng:'#818cf8',
+  SIP:'#f472b6',RTP:'#fb7185',RADIUS:'#c084fc',TACACS:'#a855f7',
+  IKE:'#fb923c',ESP:'#9ca3af',AH:'#6b7280',GRE:'#6b7280',
+  VXLAN:'#38bdf8',LLDP:'#4ade80',TFTP:'#a3e635',Syslog:'#f59e0b',
+  BFD:'#22d3ee',MPLS:'#94a3b8',PPPoE:'#64748b',VRRP:'#9ca3af',
+  LDP:'#8b5cf6',RSVP:'#7c3aed','GTP-C':'#0ea5e9','GTP-U':'#06b6d4',
+  MQTT:'#22d3ee',Modbus:'#f59e0b',CoAP:'#34d399',DNP3:'#f97316',BACnet:'#a78bfa',
+  SCTP:'#60a5fa','Diameter/SCTP':'#c084fc',Diameter:'#c084fc','GTP-C':'#38bdf8','GTP-U':'#0ea5e9',
+  PFCP:'#22d3ee',RTCP:'#fb7185',OSPF:'#3b82f6',STP:'#22c55e',LACP:'#4ade80',CDP:'#f97316',
+  PTP:'#e879f9',NetFlow:'#fbbf24','SCTP-S1AP':'#a78bfa','SCTP-M3UA':'#8b5cf6',
+  IPv6:'#93c5fd',Other:'#4b5563'};
+function pcol(p){return PCOL[p]||'#4b5563';}
+
+function buildAll(){
+  buildSidebar();
+  buildProtoBtns();
+  activeProtos=new Set(ALL.map(p=>p.proto));
+  applyFilter();
+  buildDashboard();
+  buildStreams();
+  buildCredentials();
+  buildIoTView();
+  buildVoIPView();
+  buildRoutingView();
+  buildTelecomView();
+  buildReport();
+}
+
+function buildSidebar(){
+  const pkts=ALL,total=pkts.length;
+  if(!total) return;
+  const dur=pkts[pkts.length-1].ts-pkts[0].ts;
+  const bytes=pkts.reduce((s,p)=>s+p.capLen,0);
+  const ips=new Set(),ipBytes={},protoCnt={},flows={},alerts=[];
+  pkts.forEach(p=>{
+    const si=p.src.split(':')[0],di=p.dst.split(':')[0];
+    if(/^\d{1,3}\.\d/.test(si)){ips.add(si);ipBytes[si]=(ipBytes[si]||0)+p.capLen;}
+    if(/^\d{1,3}\.\d/.test(di)){ips.add(di);ipBytes[di]=(ipBytes[di]||0)+p.capLen;}
+    protoCnt[p.proto]=(protoCnt[p.proto]||0)+1;
+    const fk=[p.src,p.dst,p.proto].join('|');
+    flows[fk]=(flows[fk]||0)+1;
+    if(p.suspicions)p.suspicions.forEach(s=>alerts.push(s));
+  });
+
+  document.getElementById('s-total').textContent=total.toLocaleString();
+  document.getElementById('s-ips').textContent=ips.size;
+  document.getElementById('s-dur').textContent=fmtDur(dur);
+  document.getElementById('s-bytes').textContent=fmtB(bytes);
+  document.getElementById('s-susp').textContent=pkts.filter(p=>p.suspicious).length.toLocaleString();
+  document.getElementById('s-avg').textContent=fmtB(Math.round(bytes/total));
+
+  const sortedP=Object.entries(protoCnt).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  document.getElementById('protoBars').innerHTML=sortedP.map(([p,c])=>{
+    const pct=(c/total*100).toFixed(1),col=pcol(p);
+    return `<div class="proto-bar"><div class="pb-hdr"><span class="pb-name" style="color:${col}">${p}</span><span class="pb-pct">${c.toLocaleString()} (${pct}%)</span></div><div class="pb-track2"><div class="pb-fill2" style="width:${pct}%;background:${col}"></div></div></div>`;
+  }).join('');
+
+  const topIPs=Object.entries(ipBytes).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  document.getElementById('topTalkers').innerHTML=topIPs.map(([ip,b])=>
+    `<div class="talker"><span class="talker-ip">${ip}</span><span>${fmtB(b)}</span></div>`).join('');
+
+  const seen=new Set(),dedupA=[];
+  alerts.forEach(a=>{const k=a.level+a.msg;if(!seen.has(k)){seen.add(k);dedupA.push(a);}});
+  document.getElementById('alertsList').innerHTML=dedupA.slice(0,8).map(a=>
+    `<div class="alert-row"><div class="al-dot al-${a.level}"></div><div class="al-msg">${esc(a.msg)}</div></div>`).join('')||'<div style="font-size:10px;color:var(--text3)">No flags detected</div>';
+
+  const topFlows=Object.entries(flows).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('topFlows').innerHTML=topFlows.map(([fk,c])=>{
+    const[src,dst,pr]=fk.split('|');
+    return `<div class="conn-row"><span class="conn-pair" title="${src} → ${dst}">${src.split(':')[0]}→${dst.split(':')[0]}</span><span class="conn-pkts">${c} <span style="color:${pcol(pr)}">${pr}</span></span></div>`;
+  }).join('');
+}
+
+function buildProtoBtns(){
+  const protos=[...new Set(ALL.map(p=>p.proto))].sort();
+  const pCls={TCP:'tcp',UDP:'udp',DNS:'dns',HTTP:'http',TLS:'http',ICMP:'icmp',ARP:'arp'};
+  document.getElementById('protoFilterRow').innerHTML=protos.map(pr=>{
+    const col=pcol(pr);
+    return `<span class="pb" id="pfb-${pr}" style="background:${col}22;color:${col};border-color:${col}44" onclick="toggleProto('${pr}')">${pr}</span>`;
+  }).join('');
+}
+
+function toggleProto(pr){
+  if(activeProtos.has(pr))activeProtos.delete(pr);
+  else activeProtos.add(pr);
+  document.getElementById(`pfb-${pr}`).classList.toggle('dim');
+  modeFilter='protos';
+  document.getElementById('btnAll').classList.remove('act');
+  document.getElementById('btnSusp').classList.remove('act');
+  renderPackets();
+}
+function setMode(m){
+  modeFilter=m;
+  document.getElementById('btnAll').classList.toggle('act',m==='all');
+  document.getElementById('btnSusp').classList.toggle('act',m==='sus');
+  if(m==='all'){activeProtos=new Set(ALL.map(p=>p.proto));document.querySelectorAll('.pb').forEach(b=>b.classList.remove('dim'));}
+  renderPackets();
+}
+function applyFilter(){filterTxt=document.getElementById('filterInput').value.trim().toLowerCase();renderPackets();}
+function clearFilter(){document.getElementById('filterInput').value='';filterTxt='';renderPackets();}
+
+function renderPackets(){
+  let pkts=ALL;
+  if(modeFilter==='sus') pkts=pkts.filter(p=>p.suspicious);
+  else if(modeFilter==='protos') pkts=pkts.filter(p=>activeProtos.has(p.proto));
+  if(filterTxt){
+    if(filterIsWs){
+      const expr=document.getElementById('filterInput').value.trim();
+      pkts=pkts.filter(p=>{try{return parseWsFilter(expr,p);}catch(e){return false;}});
+    } else {
+      pkts=pkts.filter(p=>p.src.toLowerCase().includes(filterTxt)||p.dst.toLowerCase().includes(filterTxt)||p.proto.toLowerCase().includes(filterTxt)||p.info.toLowerCase().includes(filterTxt));
+    }
+  }
+  SHOWN=pkts;
+  document.getElementById('pktCount').textContent=`${pkts.length.toLocaleString()} / ${ALL.length.toLocaleString()} pkts`;
+  const t0=ALL.length?ALL[0].ts:0;
+  const html=pkts.slice(0,3000).map((p,vi)=>{
+    const col=pcol(p.proto),susp=p.suspicious?' sus':'';
+    return `<tr class="pr${susp}" onclick="selPkt(${vi})"><td class="no">${p.idx}</td><td class="ts">${(p.ts-t0).toFixed(6)}</td><td title="${esc(p.src)}">${esc(p.src.length>20?p.src.substring(0,20)+'…':p.src)}</td><td title="${esc(p.dst)}">${esc(p.dst.length>20?p.dst.substring(0,20)+'…':p.dst)}</td><td><span style="color:${col};font-weight:700;font-size:10px">${esc(p.proto)}</span></td><td>${p.capLen}</td><td style="color:var(--text2)">${esc((p.info||'').substring(0,90))}</td></tr>`;
+  }).join('');
+  document.getElementById('pktBody').innerHTML=html+(pkts.length>3000?`<tr><td colspan="7" style="text-align:center;padding:10px;color:var(--text2);font-size:11px">Showing 3,000 of ${pkts.length.toLocaleString()} — use filters to narrow</td></tr>`:'');
+}
+
+// ════════════════════════════════════════════════════════
+//  DETAIL PANE
+// ════════════════════════════════════════════════════════
+function selPkt(vi){
+  selIdx=vi;
+  document.querySelectorAll('tr.pr').forEach((r,i)=>r.classList.toggle('sel',i===vi));
+  showDetail(SHOWN[vi]);
+}
+
+const LMETA={
+  eth:{icon:'🔌',label:'Ethernet',color:'#6b7280'},
+  vlan:{icon:'🏷',label:'802.1Q VLAN',color:'#fbbf24'},
+  arp:{icon:'🔍',label:'ARP',color:'#fbbf24'},
+  ipv4:{icon:'🌐',label:'IPv4',color:'#4f8ef7'},
+  ipv6:{icon:'🌍',label:'IPv6',color:'#93c5fd'},
+  tcp:{icon:'🔗',label:'TCP',color:'#4f8ef7'},
+  udp:{icon:'📨',label:'UDP',color:'#34d399'},
+  icmp:{icon:'📡',label:'ICMP',color:'#fb923c'},
+  icmpv6:{icon:'📡',label:'ICMPv6',color:'#f97316'},
+  dns:{icon:'🔤',label:'DNS',color:'#a78bfa'},
+  dhcp:{icon:'🏠',label:'DHCP',color:'#e879f9'},
+  http:{icon:'🌍',label:'HTTP',color:'#2dd4bf'},
+  tls:{icon:'🔒',label:'TLS/SSL',color:'#f87171'},
+  ssh:{icon:'🛡',label:'SSH',color:'#34d399'},
+  ftp:{icon:'📁',label:'FTP Control',color:'#f87171'},
+  ftpdata:{icon:'📦',label:'FTP Data',color:'#fca5a1'},
+  smtp:{icon:'📤',label:'SMTP',color:'#fb7185'},
+  pop3:{icon:'📬',label:'POP3',color:'#a78bfa'},
+  imap:{icon:'📥',label:'IMAP',color:'#818cf8'},
+  ntp:{icon:'🕐',label:'NTP',color:'#6ee7b7'},
+  bgp:{icon:'🗺',label:'BGP',color:'#60a5fa'},
+  sip:{icon:'📞',label:'SIP',color:'#f472b6'},
+  rtp:{icon:'🎵',label:'RTP',color:'#fb7185'},
+  radius:{icon:'🔑',label:'RADIUS',color:'#c084fc'},
+  ike:{icon:'🔐',label:'IKE/ISAKMP',color:'#fb923c'},
+  vxlan:{icon:'🌐',label:'VXLAN',color:'#38bdf8'},
+  lldp:{icon:'🔗',label:'LLDP',color:'#4ade80'},
+  syslog:{icon:'📜',label:'Syslog',color:'#f59e0b'},
+  tftp:{icon:'📤',label:'TFTP',color:'#a3e635'},
+  rip:{icon:'🗺',label:'RIP',color:'#6366f1'},
+  gre:{icon:'🚇',label:'GRE',color:'#6b7280'},
+  esp:{icon:'🔒',label:'IPsec ESP',color:'#9ca3af'},
+  ah:{icon:'🔒',label:'IPsec AH',color:'#6b7280'},
+  mpls:{icon:'🏷',label:'MPLS',color:'#94a3b8'},
+  pppoe:{icon:'📡',label:'PPPoE',color:'#64748b'},
+  stp:{icon:'🌲',label:'STP',color:'#22c55e'},
+  mqtt:{icon:'📨',label:'MQTT',color:'#22d3ee'},
+  modbus:{icon:'⚙',label:'Modbus TCP',color:'#f59e0b'},
+  coap:{icon:'🌐',label:'CoAP',color:'#34d399'},
+  dnp3:{icon:'⚡',label:'DNP3',color:'#f97316'},
+  bacnet:{icon:'🏢',label:'BACnet',color:'#a78bfa'},
+  sctp:{icon:'📡',label:'SCTP',color:'#60a5fa'},
+  diameter:{icon:'🔢',label:'Diameter',color:'#c084fc'},
+  gtpv2:{icon:'📶',label:'GTPv2-C',color:'#38bdf8'},
+  pfcp:{icon:'🌐',label:'PFCP',color:'#22d3ee'},
+  rtcp:{icon:'📟',label:'RTCP',color:'#fb7185'},
+  ospf:{icon:'🕸',label:'OSPF',color:'#3b82f6'},
+  bgp:{icon:'🗺',label:'BGP',color:'#60a5fa'},
+  stp:{icon:'🌲',label:'STP',color:'#22c55e'},
+  lacp:{icon:'🔁',label:'LACP',color:'#4ade80'},
+  cdp:{icon:'🏷',label:'CDP',color:'#f97316'},
+  ptp:{icon:'⏱',label:'PTP/IEEE 1588',color:'#e879f9'},
+  netflow:{icon:'📊',label:'NetFlow/IPFIX',color:'#fbbf24'},
+  tlsCiphers:{icon:'🔐',label:'TLS Cipher Audit',color:'#f87171'},
+};
+const LAYER_ORDER=['eth','vlan','arp','ipv4','ipv6','tcp','udp','icmp','icmpv6','sctp','dns','dhcp','http','tls','tlsCiphers','ssh','ftp','ftpdata','smtp','pop3','imap','ntp','bgp','sip','rtp','rtcp','radius','ike','vxlan','lldp','syslog','tftp','rip','gre','esp','ah','mpls','pppoe','stp','lacp','cdp','ptp','ospf','diameter','gtpv2','pfcp','netflow','mqtt','modbus','coap','dnp3','bacnet'];
+
+function showDetail(pkt){
+  document.getElementById('detailEmpty').style.display='none';
+  const dl=document.getElementById('detailLayers');
+  dl.style.display='block'; dl.innerHTML='';
+  LAYER_ORDER.forEach((key,li)=>{
+    if(!pkt.layers[key]) return;
+    const meta=LMETA[key]||{icon:'📦',label:key.toUpperCase(),color:'#6b7280'};
+    const bId=`lb${key}`,cId=`lc${key}`;
+    const fields=Object.entries(pkt.layers[key]).filter(([k])=>!['summary','info','suspicion'].includes(k));
+    const rows=fields.map(([k,v])=>{
+      let vc='';
+      if(k==='TTL'&&parseInt(v)<=10)vc='red';
+      else if(k==='flags'&&/RST/.test(v))vc='red';
+      else if(k==='flags'&&/SYN/.test(v))vc='grn';
+      else if(k==='type'&&/Request/.test(v))vc='acc';
+      else if(k==='password'||k==='authorization')vc='red';
+      else if(k==='version'&&/TLS/.test(v))vc='grn';
+      return `<div class="lf"><span class="lf-k">${esc(k)}</span><span class="lf-v ${vc}">${esc(String(v))}</span></div>`;
+    }).join('');
+    const sec=document.createElement('div');sec.className='layer';
+    sec.innerHTML=`<div class="layer-hdr" onclick="toggleLayer('${bId}','${cId}')"><span class="layer-icon">${meta.icon}</span><span class="layer-name" style="color:${meta.color}">${meta.label}</span><span class="layer-chv${li===0?' open':''}" id="${cId}">▶</span></div><div class="layer-body${li===0?' open':''}" id="${bId}">${rows}</div>`;
+    dl.appendChild(sec);
+  });
+  if(pkt.suspicions&&pkt.suspicions.length){
+    const sec=document.createElement('div');sec.className='layer';
+    const items=pkt.suspicions.map(s=>`<div class="alert-row"><div class="al-dot al-${s.level}"></div><div class="al-msg">${esc(s.msg)}</div></div>`).join('');
+    sec.innerHTML=`<div class="layer-hdr" onclick="toggleLayer('lbsusp','lcsusp')"><span class="layer-icon">⚠️</span><span class="layer-name" style="color:var(--red)">Security flags</span><span class="layer-chv open" id="lcsusp">▶</span></div><div class="layer-body open" id="lbsusp" style="padding-left:14px">${items}</div>`;
+    dl.appendChild(sec);
+  }
+  const hv=document.getElementById('hexView');
+  hv.style.display='block'; hv.textContent=buildHex(pkt.rawData);
+}
+
+function toggleLayer(bId,cId){
+  document.getElementById(bId).classList.toggle('open');
+  document.getElementById(cId).classList.toggle('open');
+}
+
+function buildHex(raw){
+  const lines=[],lim=Math.min(raw.length,320);
+  for(let i=0;i<lim;i+=16){
+    const sl=raw.slice(i,i+16);
+    const addr=hx(i,4);
+    const hex=[...sl].map(b=>hx(b)).join(' ');
+    const asc=[...sl].map(b=>(b>=32&&b<127)?String.fromCharCode(b):'.').join('');
+    lines.push(`${addr}  ${hex.padEnd(47)}  ${asc}`);
+  }
+  if(raw.length>lim)lines.push(`… ${raw.length-lim} more bytes`);
+  return lines.join('\n');
+}
+
+// ════════════════════════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════════════════════════
+function buildDashboard(){
+  const dash=document.getElementById('dashContent');
+  dash.innerHTML='';
+  const pkts=ALL,total=pkts.length;
+  if(!total){dash.innerHTML='<div class="no-data" style="grid-column:1/-1">No packets</div>';return;}
+
+  const t0=pkts[0].ts,dur=pkts[pkts.length-1].ts-t0;
+  const bytes=pkts.reduce((s,p)=>s+p.capLen,0);
+  const protoCnt={},ipBytes={},ipPkts={},alerts=[],flows={};
+  pkts.forEach(p=>{
+    protoCnt[p.proto]=(protoCnt[p.proto]||0)+1;
+    const si=p.src.split(':')[0],di=p.dst.split(':')[0];
+    if(/^\d/.test(si)){ipBytes[si]=(ipBytes[si]||0)+p.capLen;ipPkts[si]=(ipPkts[si]||0)+1;}
+    if(/^\d/.test(di)){ipBytes[di]=(ipBytes[di]||0)+p.capLen;ipPkts[di]=(ipPkts[di]||0)+1;}
+    if(p.suspicions)p.suspicions.forEach(s=>alerts.push(s));
+    const fk=`${p.src.split(':')[0]}↔${p.dst.split(':')[0]}|${p.proto}`;
+    flows[fk]=(flows[fk]||0)+1;
+  });
+
+  // Card: Capture overview
+  addCard(dash,'📊 Capture overview',`
+    <div class="metric-row">
+      <div class="metric"><div class="metric-val" style="color:var(--accent)">${total.toLocaleString()}</div><div class="metric-lbl">Packets</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--green)">${fmtB(bytes)}</div><div class="metric-lbl">Bytes</div></div>
+      <div class="metric"><div class="metric-val">${fmtDur(dur)}</div><div class="metric-lbl">Duration</div></div>
+      <div class="metric"><div class="metric-val">${fmtB(Math.round(bytes/total))}</div><div class="metric-lbl">Avg packet</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--yellow)">${dur>0?(total/dur).toFixed(1):total}</div><div class="metric-lbl">Pkts/sec</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--red)">${pkts.filter(p=>p.suspicious).length}</div><div class="metric-lbl">Alerts</div></div>
+    </div>
+    <canvas id="tlCanvas" class="timeline-canvas" height="60"></canvas>
+  `);
+  drawTimeline(pkts,t0,dur);
+
+  // Card: Protocol distribution
+  const sortedP=Object.entries(protoCnt).sort((a,b)=>b[1]-a[1]);
+  addCard(dash,'📡 Protocol distribution',`
+    <div class="bar-chart">${sortedP.slice(0,10).map(([p,c])=>{
+      const pct=(c/total*100),col=pcol(p);
+      return `<div class="bc-row"><span class="bc-label" style="color:${col}">${p}</span><div class="bc-track"><div class="bc-fill" style="width:${pct.toFixed(1)}%;background:${col}"></div></div><span class="bc-val">${c.toLocaleString()}</span></div>`;
+    }).join('')}</div>
+  `);
+
+  // Card: Security flags
+  const seen=new Set(),dedupA=[];
+  alerts.forEach(a=>{const k=a.level+a.msg;if(!seen.has(k)){seen.add(k);dedupA.push(a);}});
+  const highA=dedupA.filter(a=>a.level==='high'),medA=dedupA.filter(a=>a.level==='med'),lowA=dedupA.filter(a=>a.level==='low');
+  addCard(dash,`🛡 Security analysis — ${dedupA.length} flag${dedupA.length!==1?'s':''}`,`
+    <div class="metric-row" style="margin-bottom:12px">
+      <div class="metric"><div class="metric-val" style="color:var(--red)">${highA.length}</div><div class="metric-lbl">High</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--yellow)">${medA.length}</div><div class="metric-lbl">Medium</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--green)">${lowA.length}</div><div class="metric-lbl">Low</div></div>
+    </div>
+    <div class="flag-list">${dedupA.slice(0,8).map(a=>`<div class="flag-item"><span class="flag-sev sev-${a.level}">${a.level.toUpperCase()}</span><span class="flag-msg">${esc(a.msg)}</span></div>`).join('')||'<div class="no-data">No security flags detected ✓</div>'}</div>
+  `);
+
+  // Card: Top talkers
+  const topIPs=Object.entries(ipBytes).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  addCard(dash,'🏆 Top talkers by bytes',`
+    <table class="flow-table">
+      <thead><tr><th>IP Address</th><th>Bytes</th><th>Packets</th></tr></thead>
+      <tbody>${topIPs.map(([ip,b])=>`<tr><td>${esc(ip)}</td><td>${fmtB(b)}</td><td>${(ipPkts[ip]||0).toLocaleString()}</td></tr>`).join('')}</tbody>
+    </table>
+  `);
+
+  // Card: Top flows
+  const topFlows=Object.entries(flows).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  addCard(dash,'🔀 Top conversations',`
+    <table class="flow-table">
+      <thead><tr><th>Flow</th><th>Proto</th><th>Pkts</th></tr></thead>
+      <tbody>${topFlows.map(([fk,c])=>{const[pair,pr]=fk.split('|');return`<tr><td>${esc(pair)}</td><td style="color:${pcol(pr)}">${esc(pr)}</td><td>${c}</td></tr>`;}).join('')}</tbody>
+    </table>
+  `);
+
+  // Card: Protocol type breakdown
+  const tcpPkts=pkts.filter(p=>p.proto==='TCP').length,udpPkts=pkts.filter(p=>p.proto==='UDP').length;
+  const icmpPkts=pkts.filter(p=>p.proto==='ICMP'||p.proto==='ICMPv6').length;
+  const arpPkts=pkts.filter(p=>p.proto==='ARP').length;
+  const otherPkts=total-tcpPkts-udpPkts-icmpPkts-arpPkts;
+  addCard(dash,'🍩 Transport breakdown',`
+    <div class="bar-chart">
+      ${[['TCP',tcpPkts,'#4f8ef7'],['UDP',udpPkts,'#34d399'],['ICMP/v6',icmpPkts,'#fb923c'],['ARP',arpPkts,'#fbbf24'],['Other',otherPkts,'#4b5563']].filter(([,c])=>c>0).map(([n,c,col])=>`<div class="bc-row"><span class="bc-label" style="color:${col}">${n}</span><div class="bc-track"><div class="bc-fill" style="width:${(c/total*100).toFixed(1)}%;background:${col}"></div></div><span class="bc-val">${c.toLocaleString()}</span></div>`).join('')}
+    </div>
+  `);
+}
+
+function addCard(parent,title,content){
+  const d=document.createElement('div'); d.className='dash-card';
+  d.innerHTML=`<div class="dc-title">${title}</div>${content}`;
+  parent.appendChild(d);
+}
+
+function drawTimeline(pkts,t0,dur){
+  requestAnimationFrame(()=>{
+    const canvas=document.getElementById('tlCanvas');
+    if(!canvas)return;
+    const W=canvas.offsetWidth,H=60;
+    canvas.width=W; canvas.height=H;
+    const ctx=canvas.getContext('2d');
+    const bins=Math.min(W,120);
+    const counts=new Array(bins).fill(0);
+    pkts.forEach(p=>{const b=Math.min(bins-1,Math.floor((p.ts-t0)/dur*bins))||0;counts[b]++;});
+    const mx=Math.max(...counts)||1;
+    ctx.fillStyle='rgba(79,142,247,0.08)';
+    ctx.fillRect(0,0,W,H);
+    counts.forEach((c,i)=>{
+      const x=Math.floor(i/bins*W),w=Math.max(1,Math.floor(W/bins)),h=Math.round(c/mx*(H-4));
+      const alpha=0.3+0.7*(c/mx);
+      ctx.fillStyle=`rgba(79,142,247,${alpha})`;
+      ctx.fillRect(x,H-h,w,h);
+    });
+  });
+}
+
+// ════════════════════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════════════════════
+function switchView(id,tab){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('act'));
+  document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('act'));
+  document.getElementById('view-'+id).classList.add('act');
+  tab.classList.add('act');
+}
+
+// ════════════════════════════════════════════════════════
+//  WIRESHARK DISPLAY FILTER ENGINE
+// ════════════════════════════════════════════════════════
+function parseWsFilter(expr, pkt) {
+  if(!expr || !expr.trim()) return true;
+  expr = expr.trim();
+  try {
+    // Handle parentheses
+    while(/^\(.*\)$/.test(expr) && matchingParen(expr,0)===expr.length-1) expr=expr.slice(1,-1).trim();
+    // OR
+    const orIdx = splitLogical(expr,' or ');
+    if(orIdx>=0) return parseWsFilter(expr.slice(0,orIdx),pkt)||parseWsFilter(expr.slice(orIdx+4),pkt);
+    // AND / &&
+    const andIdx = splitLogical(expr,' and ');
+    if(andIdx>=0) return parseWsFilter(expr.slice(0,andIdx),pkt)&&parseWsFilter(expr.slice(andIdx+5),pkt);
+    const andIdx2 = splitLogical(expr,' && ');
+    if(andIdx2>=0) return parseWsFilter(expr.slice(0,andIdx2),pkt)&&parseWsFilter(expr.slice(andIdx2+4),pkt);
+    const orIdx2 = splitLogical(expr,' || ');
+    if(orIdx2>=0) return parseWsFilter(expr.slice(0,orIdx2),pkt)||parseWsFilter(expr.slice(orIdx2+4),pkt);
+    // NOT
+    if(/^(not |!)/.test(expr)) return !parseWsFilter(expr.replace(/^(not |!)/,'').trim(),pkt);
+    // Single field comparisons
+    return evalField(expr,pkt);
+  } catch(e) { return false; }
+}
+
+function matchingParen(s,open) {
+  let d=0;
+  for(let i=open;i<s.length;i++){if(s[i]==='(')d++;else if(s[i]===')')d--;if(d===0)return i;}
+  return -1;
+}
+function splitLogical(expr,sep) {
+  let d=0;
+  for(let i=0;i<expr.length-sep.length+1;i++){
+    if(expr[i]==='(')d++;else if(expr[i]===')')d--;
+    if(d===0&&expr.substr(i,sep.length)===sep)return i;
+  }
+  return -1;
+}
+
+function evalField(expr,pkt) {
+  const L=pkt.layers||{};
+  // Protocol presence: just "tcp", "dns", "http", etc.
+  const protoOnly={tcp:'TCP',udp:'UDP',icmp:'ICMP',icmpv6:'ICMPv6',dns:'DNS',http:'HTTP',tls:'TLS',
+    arp:'ARP',dhcp:'DHCP',bootp:'DHCP',ftp:'FTP',ssh:'SSH',smtp:'SMTP',pop3:'POP3',imap:'IMAP',
+    sip:'SIP',rtp:'RTP',ntp:'NTP',snmp:'SNMP',bgp:'BGP',ospf:'OSPF',gre:'GRE',esp:'ESP',
+    vlan:'VLAN',lldp:'LLDP',vxlan:'VXLAN',mpls:'MPLS',ip:'IPv4',ipv6:'IPv6',
+    mqtt:'MQTT',modbus:'Modbus',dnp3:'DNP3',coap:'CoAP',syslog:'Syslog',radius:'RADIUS',
+    tftp:'TFTP',rip:'RIP',ldp:'LDP',ike:'IKE',bfd:'BFD',stp:'STP',pppoe:'PPPoE'};
+  const lExpr=expr.toLowerCase().trim();
+  if(protoOnly[lExpr]) return pkt.proto===protoOnly[lExpr]||(L[lExpr]!==undefined);
+
+  // Parse field op value: ip.src == 1.2.3.4
+  const m=expr.match(/^([a-zA-Z0-9._]+)\s*(==|!=|>=|<=|>|<|contains|matches)\s*(.+)$/i);
+  if(!m) return false;
+  const [,field,op,rawVal]=m;
+  const val=rawVal.replace(/^["']|["']$/g,'');
+  const fv=getField(field,pkt);
+  if(fv===null||fv===undefined) return false;
+  const fvStr=String(fv).toLowerCase(), valLow=val.toLowerCase();
+  const fvNum=parseFloat(fvStr), valNum=parseFloat(val);
+  if(op==='==') return fvStr===valLow||(!isNaN(fvNum)&&!isNaN(valNum)&&fvNum===valNum);
+  if(op==='!=') return fvStr!==valLow;
+  if(op==='contains') return fvStr.includes(valLow);
+  if(op==='matches') try{return new RegExp(val,'i').test(String(fv));}catch(e){return false;}
+  if(!isNaN(fvNum)&&!isNaN(valNum)){
+    if(op==='>') return fvNum>valNum; if(op==='<') return fvNum<valNum;
+    if(op==='>=') return fvNum>=valNum; if(op==='<=') return fvNum<=valNum;
+  }
+  return false;
+}
+
+function getField(field,pkt) {
+  const L=pkt.layers||{};
+  const f=field.toLowerCase();
+  // IP fields
+  if(f==='ip.src'||f==='ip.src_host') return (L.ipv4||L.ipv6||{}).srcIP||pkt.src.split(':')[0];
+  if(f==='ip.dst'||f==='ip.dst_host') return (L.ipv4||L.ipv6||{}).dstIP||pkt.dst.split(':')[0];
+  if(f==='ip.ttl') return (L.ipv4||{}).TTL;
+  if(f==='ip.proto') return (L.ipv4||{}).protocol;
+  if(f==='ip.len') return (L.ipv4||{}).totalLength||pkt.capLen;
+  if(f==='ip.id') return (L.ipv4||{}).ID;
+  if(f==='ipv6.src') return (L.ipv6||{}).srcIP;
+  if(f==='ipv6.dst') return (L.ipv6||{}).dstIP;
+  if(f==='ipv6.hlim') return (L.ipv6||{}).hopLimit;
+  // TCP fields
+  if(f==='tcp.srcport'||f==='tcp.port') return L.tcp?L.tcp.srcPort:null;
+  if(f==='tcp.dstport') return L.tcp?L.tcp.dstPort:null;
+  if(f==='tcp.port') return L.tcp?(L.tcp.srcPort+'|'+L.tcp.dstPort):null;
+  if(f==='tcp.flags') return L.tcp?L.tcp.flags:null;
+  if(f==='tcp.seq') return L.tcp?L.tcp.sequence:null;
+  if(f==='tcp.ack') return L.tcp?L.tcp.acknowledgement:null;
+  if(f==='tcp.window_size') return L.tcp?L.tcp.window:null;
+  if(f==='tcp.len') return L.tcp?L.tcp.payloadLen:null;
+  if(f==='tcp.flags.syn') return L.tcp?(L.tcp.flags&&L.tcp.flags.includes('SYN')?1:0):null;
+  if(f==='tcp.flags.rst') return L.tcp?(L.tcp.flags&&L.tcp.flags.includes('RST')?1:0):null;
+  if(f==='tcp.flags.fin') return L.tcp?(L.tcp.flags&&L.tcp.flags.includes('FIN')?1:0):null;
+  if(f==='tcp.flags.ack') return L.tcp?(L.tcp.flags&&L.tcp.flags.includes('ACK')?1:0):null;
+  // UDP fields
+  if(f==='udp.srcport') return L.udp?L.udp.srcPort:null;
+  if(f==='udp.dstport') return L.udp?L.udp.dstPort:null;
+  if(f==='udp.port') return L.udp?(L.udp.srcPort+'|'+L.udp.dstPort):null;
+  if(f==='udp.length') return L.udp?L.udp.length:null;
+  // ICMP
+  if(f==='icmp.type') return L.icmp?parseInt(L.icmp.type):null;
+  if(f==='icmp.code') return L.icmp?L.icmp.code:null;
+  // DNS
+  if(f==='dns.qry.name') return L.dns?L.dns.queryName:null;
+  if(f==='dns.qry.type') return L.dns?L.dns.queryType:null;
+  if(f==='dns.flags.response') return L.dns?(L.dns.type==='Response'?1:0):null;
+  // HTTP
+  if(f==='http.request.method') return L.http?L.http.method:null;
+  if(f==='http.host') return L.http?L.http.host:null;
+  if(f==='http.user_agent') return L.http?L.http.userAgent:null;
+  // TLS
+  if(f==='tls.handshake.type') return L.tls?L.tls.handshakeType:null;
+  if(f==='tls.record.version') return L.tls?L.tls.version:null;
+  if(f==='ssl.handshake.extensions_server_name') return L.tls?L.tls.SNI:null;
+  // Ethernet / Frames
+  if(f==='eth.src') return L.eth?L.eth.srcMAC:null;
+  if(f==='eth.dst') return L.eth?L.eth.dstMAC:null;
+  if(f==='frame.len') return pkt.capLen;
+  if(f==='frame.number') return pkt.idx;
+  if(f==='frame.time_relative') return pkt.ts-(ALL.length?ALL[0].ts:0);
+  // DHCP
+  if(f==='bootp.ip.your') return L.dhcp?L.dhcp.yourIP:null;
+  if(f==='bootp.hw.mac_addr') return L.dhcp?L.dhcp.clientMAC:null;
+  // FTP
+  if(f==='ftp.request.command') return L.ftp?L.ftp.command:null;
+  // ARP
+  if(f==='arp.src.proto_ipv4') return L.arp?L.arp.senderIP:null;
+  if(f==='arp.dst.proto_ipv4') return L.arp?L.arp.targetIP:null;
+  // VLAN
+  if(f==='vlan.id') return L.vlan?L.vlan.vlanID:null;
+  // Generic contains across all fields
+  if(f==='frame') return JSON.stringify(pkt);
+  return null;
+}
+
+// Override applyFilter to support both modes
+function applyFilter(){
+  const raw=document.getElementById('filterInput').value.trim();
+  filterTxt=raw.toLowerCase();
+  // Detect Wireshark syntax: contains dots like ip.src, tcp.port, etc.
+  const isWs=/\b(ip|tcp|udp|icmp|dns|http|tls|eth|arp|frame|bootp|ftp|vlan|dhcp|bgp|sip)\.\w/.test(raw)||/\b(not |and |or )\b/.test(raw);
+  document.getElementById('fmode').textContent=isWs?'ws':'txt';
+  filterIsWs=isWs;
+  renderPackets();
+}
+let filterIsWs=false;
+
+// ════════════════════════════════════════════════════════
+//  TCP STREAM REASSEMBLY
+// ════════════════════════════════════════════════════════
+let streams={}, streamList=[], selStream=null, streamMode='both';
+
+function buildStreams(){
+  streams={};
+  ALL.forEach(pkt=>{
+    if(!pkt.layers.tcp&&!pkt.layers.udp) return;
+    const L=pkt.layers.tcp||pkt.layers.udp;
+    const sp=L.srcPort,dp=L.dstPort;
+    const srcIP=pkt.src.split(':')[0],dstIP=pkt.dst.split(':')[0];
+    // Canonical key: lower IP:port first
+    const a=`${srcIP}:${sp}`,b=`${dstIP}:${dp}`;
+    const key=a<b?`${a}↔${b}|${pkt.proto}`:`${b}↔${a}|${pkt.proto}`;
+    if(!streams[key]) streams[key]={key,proto:pkt.proto,src:a,dst:b,pkts:[],srcIP,dstIP,sp,dp,bytes:0,client:a,server:b};
+    streams[key].pkts.push(pkt);
+    streams[key].bytes+=pkt.capLen;
+  });
+  streamList=Object.values(streams).sort((a,b)=>b.pkts.length-a.pkts.length);
+  document.getElementById('streamCount').textContent=streamList.length;
+  renderStreamList(streamList);
+}
+
+function renderStreamList(list){
+  const el=document.getElementById('streamList');
+  el.innerHTML=list.slice(0,500).map((s,i)=>{
+    const col=pcol(s.proto);
+    return `<div class="stream-item" id="si-${i}" onclick="selectStream(${i},this)">
+      <div class="si-top">
+        <span class="si-proto" style="background:${col}22;color:${col}">${esc(s.proto)}</span>
+        <span class="si-pair">${esc(s.src.split(':')[0])} → ${esc(s.dst.split(':')[0])}</span>
+      </div>
+      <div class="si-meta">${s.pkts.length} pkts · ${fmtB(s.bytes)} · ports ${s.sp}↔${s.dp}</div>
+    </div>`;
+  }).join('');
+}
+
+let filteredStreams=[];
+function filterStreams(){
+  const q=document.getElementById('streamSearch').value.toLowerCase();
+  filteredStreams=q?streamList.filter(s=>s.src.includes(q)||s.dst.includes(q)||s.proto.toLowerCase().includes(q)):streamList;
+  renderStreamList(filteredStreams||streamList);
+}
+
+function selectStream(idx,el){
+  document.querySelectorAll('.stream-item').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  const list=filteredStreams.length?filteredStreams:streamList;
+  selStream=list[idx];
+  document.getElementById('streamEmpty').style.display='none';
+  const dw=document.getElementById('streamDetailWrap');
+  dw.style.display='flex';
+  document.getElementById('streamTitle').textContent=`${selStream.proto}: ${selStream.src} ↔ ${selStream.dst}`;
+  renderStream();
+}
+
+function setStreamMode(m){
+  streamMode=m;
+  ['Both','Client','Server','Hex'].forEach(n=>document.getElementById('btn'+n).classList.toggle('act',n.toLowerCase()===m));
+  renderStream();
+}
+
+function renderStream(){
+  if(!selStream) return;
+  const content=document.getElementById('streamContent');
+  const pkts=selStream.pkts.sort((a,b)=>a.ts-b.ts);
+
+  if(streamMode==='hex'){
+    let out='';
+    pkts.forEach(p=>{
+      const dir=p.src.startsWith(selStream.client.split(':')[0])?'→ CLIENT':'← SERVER';
+      out+=`\n[Pkt #${p.idx} ${dir} ${p.capLen}B]\n${buildHex(p.rawData)}\n`;
+    });
+    content.textContent=out||'No data';
+    content.className='stream-content';
+    return;
+  }
+
+  let out='';
+  pkts.forEach(p=>{
+    const isClient=p.src.startsWith(selStream.client.split(':')[0]);
+    if(streamMode==='client'&&!isClient) return;
+    if(streamMode==='server'&&isClient) return;
+    const L=p.layers.tcp||p.layers.udp;
+    if(!L) return;
+    const doff=L.dataOffset?parseInt(L.dataOffset):8;
+    const payload=p.rawData.slice(p.rawData.length-(L.payloadLen||0));
+    if(!payload.length) return;
+    const text=new TextDecoder('utf-8',{fatal:false}).decode(payload);
+    const cls=isClient?'sc-client':'sc-server';
+    const prefix=isClient?'► ':'◄ ';
+    out+=`<div class="${cls}">${prefix}${esc(text)}</div>`;
+  });
+  content.innerHTML=out||'<div style="color:var(--text2);padding:20px">No payload data in this stream</div>';
+}
+
+function copyStream(){
+  if(!selStream) return;
+  const text=document.getElementById('streamContent').textContent||document.getElementById('streamContent').innerText;
+  navigator.clipboard.writeText(text).catch(()=>{});
+}
+
+// ════════════════════════════════════════════════════════
+//  CREDENTIAL HARVESTER
+// ════════════════════════════════════════════════════════
+let harvested=[];
+
+function buildCredentials(){
+  harvested=[];
+  const CRED_PROTOS=['FTP','POP3','IMAP','SMTP','HTTP','Telnet','RADIUS'];
+  ALL.forEach(pkt=>{
+    if(!CRED_PROTOS.includes(pkt.proto)) return;
+    const L=pkt.layers;
+    const srcIP=pkt.src.split(':')[0], dstIP=pkt.dst.split(':')[0];
+    const sp=L.tcp?L.tcp.srcPort:'', dp=L.tcp?L.tcp.dstPort:'';
+
+    // FTP
+    if(pkt.proto==='FTP'&&L.ftp){
+      if(L.ftp.username) harvested.push({proto:'FTP',level:'high',pktIdx:pkt.idx,src:srcIP,dst:dstIP,port:sp||dp,field:'Username',value:L.ftp.username,raw:pkt.info});
+      if(L.ftp.password) harvested.push({proto:'FTP',level:'high',pktIdx:pkt.idx,src:srcIP,dst:dstIP,port:sp||dp,field:'Password',value:'(cleartext)',raw:pkt.info,redacted:true});
+    }
+    // POP3 / IMAP / SMTP
+    if(['POP3','IMAP','SMTP'].includes(pkt.proto)){
+      const info=pkt.info||'';
+      const uMatch=info.match(/^USER (.+)/i)||info.match(/LOGIN "?([^" ]+)/i);
+      const pMatch=info.match(/^PASS (.+)/i)||info.match(/^AUTH PLAIN (.+)/i);
+      if(uMatch) harvested.push({proto:pkt.proto,level:'high',pktIdx:pkt.idx,src:srcIP,dst:dstIP,port:sp||dp,field:'Username',value:uMatch[1].trim().substring(0,60)});
+      if(pMatch) harvested.push({proto:pkt.proto,level:'high',pktIdx:pkt.idx,src:srcIP,dst:dstIP,port:sp||dp,field:'Password',value:'(cleartext)',redacted:true});
+    }
+    // HTTP Basic Auth / form
+    if(pkt.proto==='HTTP'&&L.http){
+      if(L.http.authorization) harvested.push({proto:'HTTP',level:'high',pktIdx:pkt.idx,src:srcIP,dst:dstIP,port:sp||dp,field:'Authorization',value:L.http.authorization,raw:L.http.host});
+      if(L.http.cookie) harvested.push({proto:'HTTP',level:'med',pktIdx:pkt.idx,src:srcIP,dst:dstIP,port:sp||dp,field:'Cookie',value:'(present)',raw:L.http.host});
+    }
+    // RADIUS
+    if(pkt.proto==='RADIUS'&&L.radius&&L.radius.username) harvested.push({proto:'RADIUS',level:'med',pktIdx:pkt.idx,src:srcIP,dst:dstIP,port:sp||dp,field:'Username',value:L.radius.username});
+    // Telnet
+    if(pkt.proto==='Telnet') harvested.push({proto:'Telnet',level:'high',pktIdx:pkt.idx,src:srcIP,dst:dstIP,port:23,field:'Session',value:'Cleartext interactive session',raw:pkt.info.substring(0,40)});
+    // SNMP community
+    if(pkt.proto==='SNMP') harvested.push({proto:'SNMP',level:'med',pktIdx:pkt.idx,src:srcIP,dst:dstIP,port:161,field:'Community String',value:'In cleartext over UDP'});
+  });
+
+  const wrap=document.getElementById('credsWrap');
+  if(!harvested.length){
+    wrap.innerHTML=`<div class="creds-empty"><div style="font-size:36px">✅</div><strong style="color:var(--green)">No credentials found</strong><span style="color:var(--text2)">No cleartext credentials were detected in this capture.</span></div>`;
+    return;
+  }
+
+  const high=harvested.filter(c=>c.level==='high').length;
+  const med=harvested.filter(c=>c.level==='med').length;
+
+  let html=`<div class="creds-header">
+    <div class="creds-stat"><span class="creds-stat-val">${harvested.length}</span><span class="creds-stat-lbl">Total findings</span></div>
+    <div class="creds-stat"><span class="creds-stat-val" style="color:var(--red)">${high}</span><span class="creds-stat-lbl">High severity</span></div>
+    <div class="creds-stat"><span class="creds-stat-val" style="color:var(--yellow)">${med}</span><span class="creds-stat-lbl">Medium</span></div>
+    <div style="flex:1"></div>
+    <button class="tb-btn" onclick="exportCreds()">⬇ Export</button>
+  </div>`;
+
+  // Group by protocol
+  const byProto={};
+  harvested.forEach(c=>{if(!byProto[c.proto])byProto[c.proto]=[];byProto[c.proto].push(c);});
+  Object.entries(byProto).forEach(([proto,creds])=>{
+    const col=pcol(proto);
+    html+=`<div style="font-size:10px;font-weight:600;color:${col};text-transform:uppercase;letter-spacing:0.8px;margin-top:4px">${proto} — ${creds.length} finding${creds.length>1?'s':''}</div>`;
+    creds.forEach(c=>{
+      html+=`<div class="cred-card ${c.level}">
+        <div class="cc-header">
+          <span class="cc-proto" style="background:${col}22;color:${col}">${esc(c.proto)}</span>
+          <span class="cc-pair">${esc(c.src)} → ${esc(c.dst)}${c.port?':'+c.port:''}</span>
+          <span class="cc-pkt" onclick="jumpToPkt(${c.pktIdx})">Pkt #${c.pktIdx}</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-field"><div class="cc-label">Field</div><div class="cc-value">${esc(c.field)}</div></div>
+          <div class="cc-field"><div class="cc-label">Value</div><div class="cc-value ${c.redacted?'danger':''}">${esc(c.value)}</div></div>
+          ${c.raw?`<div class="cc-field" style="grid-column:1/-1"><div class="cc-label">Context</div><div class="cc-value">${esc(c.raw.substring(0,80))}</div></div>`:''}
+        </div>
+      </div>`;
+    });
+  });
+  wrap.innerHTML=html;
+}
+
+function jumpToPkt(idx){
+  // Switch to packets view and highlight
+  document.querySelectorAll('.vtab').forEach((t,i)=>{if(i===0){t.click();}});
+  setTimeout(()=>{
+    const rows=document.querySelectorAll('tr.pr');
+    rows.forEach(r=>{
+      const numEl=r.querySelector('td.no');
+      if(numEl&&parseInt(numEl.textContent)===idx){
+        r.scrollIntoView({behavior:'smooth',block:'center'});
+        r.style.outline='2px solid var(--accent)';
+        setTimeout(()=>r.style.outline='',2000);
+      }
+    });
+  },200);
+}
+
+function exportCreds(){
+  const rows=[['Protocol','Severity','Packet','Source','Destination','Port','Field','Value']];
+  harvested.forEach(c=>rows.push([c.proto,c.level,c.pktIdx,c.src,c.dst,c.port,c.field,c.redacted?'[REDACTED]':c.value]));
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(r=>r.join(',')).join('\n'));
+  a.download='credentials-report.csv'; a.click();
+}
+
+// ════════════════════════════════════════════════════════
+//  IoT / OT PROTOCOL DISSECTORS
+// ════════════════════════════════════════════════════════
+function dissectMQTT(raw,off){
+  if(raw.length<off+2) return null;
+  const ctrl=u8(raw,off),type=(ctrl>>4)&0xF,flags=ctrl&0xF;
+  const TYPES={1:'CONNECT',2:'CONNACK',3:'PUBLISH',4:'PUBACK',5:'PUBREC',6:'PUBREL',7:'PUBCOMP',8:'SUBSCRIBE',9:'SUBACK',10:'UNSUBSCRIBE',11:'UNSUBACK',12:'PINGREQ',13:'PINGRESP',14:'DISCONNECT'};
+  const obj={messageType:TYPES[type]||`Type ${type}`,flags};
+  if(type===3){// PUBLISH
+    const topicLen=u16(raw,off+2);
+    obj.topic=new TextDecoder('utf-8',{fatal:false}).decode(raw.slice(off+4,off+4+topicLen));
+    obj.qos=(flags>>1)&3; obj.retain=flags&1;
+    const payOff=off+4+topicLen+(obj.qos>0?2:0);
+    obj.payloadLen=raw.length-payOff;
+    if(obj.payloadLen>0&&obj.payloadLen<200){
+      const payTxt=new TextDecoder('utf-8',{fatal:false}).decode(raw.slice(payOff,payOff+obj.payloadLen));
+      if(/^[\x20-\x7E\t\n\r]+$/.test(payTxt)) obj.payload=payTxt.substring(0,80);
+    }
+  } else if(type===1){// CONNECT
+    const protoNameLen=u16(raw,off+2);
+    obj.protocolName=new TextDecoder().decode(raw.slice(off+4,off+4+protoNameLen));
+    obj.version=u8(raw,off+4+protoNameLen);
+    const connFlags=u8(raw,off+5+protoNameLen);
+    obj.cleanSession=(connFlags>>1)&1; obj.willFlag=(connFlags>>2)&1;
+    obj.usernameFlag=(connFlags>>7)&1; obj.passwordFlag=(connFlags>>6)&1;
+    obj.keepAlive=u16(raw,off+6+protoNameLen);
+  }
+  obj.summary=`MQTT ${TYPES[type]||type}${obj.topic?' topic='+obj.topic:''}`;
+  return obj;
+}
+
+function dissectModbus(raw,off){
+  if(raw.length<off+6) return null;
+  const tid=u16(raw,off),pid=u16(raw,off+2),len=u16(raw,off+4),uid=u8(raw,off+6);
+  const fc=u8(raw,off+7);
+  const FC={1:'Read Coils',2:'Read Discrete Inputs',3:'Read Holding Regs',4:'Read Input Regs',5:'Write Single Coil',6:'Write Single Reg',15:'Write Multiple Coils',16:'Write Multiple Regs',43:'Encapsulated Interface'};
+  const isException=(fc&0x80)>0;
+  const obj={transactionID:tid,protocolID:pid,length:len,unitID:uid,functionCode:`${fc} (${isException?'Exception: '+FC[fc&0x7F]:FC[fc]||fc})`};
+  if(!isException&&(fc===3||fc===4||fc===1||fc===2)){obj.startAddr=u16(raw,off+8);obj.quantity=u16(raw,off+10);}
+  obj.summary=`Modbus ${isException?'Exception':FC[fc&0x7F]||fc} uid=${uid}`;
+  return obj;
+}
+
+function dissectCoAP(raw,off){
+  if(raw.length<off+4) return null;
+  const b0=u8(raw,off),ver=(b0>>6)&3,type=(b0>>4)&3,tkl=b0&0xF;
+  const code=u8(raw,off+1),msgID=u16(raw,off+2);
+  const TYPES={0:'CON',1:'NON',2:'ACK',3:'RST'};
+  const codeClass=(code>>5)&7,codeDetail=code&0x1F;
+  let codeStr;
+  if(code===0&&type>0) codeStr='Empty';
+  else if(codeClass===0) codeStr=`${codeClass}.${String(codeDetail).padStart(2,'0')} (Method)`;
+  else codeStr=`${codeClass}.${String(codeDetail).padStart(2,'0')} (Response)`;
+  const METHODS={1:'GET',2:'POST',3:'PUT',4:'DELETE'};
+  const token=Array.from(raw.slice(off+4,off+4+tkl)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  let uri='',p=off+4+tkl;
+  while(p<raw.length&&raw[p]!==0xFF){
+    const delta=(raw[p]>>4)&0xF,optLen=raw[p]&0xF;p++;
+    if(delta===11&&optLen>0){const seg=new TextDecoder().decode(raw.slice(p,p+optLen));uri+='/'+seg;}
+    p+=optLen;
+  }
+  return {version:ver,type:TYPES[type]||type,code:codeStr,messageID:msgID,token:token||'—',uri:uri||'—',
+    summary:`CoAP ${TYPES[type]} ${codeClass===0?(METHODS[codeDetail]||codeDetail):codeStr}${uri?' '+uri:''}`};
+}
+
+function dissectDNP3(raw,off){
+  if(raw.length<off+10) return null;
+  // DNP3 starts with 0x0564
+  if(u16(raw,off)!==0x0564) return null;
+  const len=u8(raw,off+2),ctrl=u8(raw,off+3),dst=u16(raw,off+4),src=u16(raw,off+6);
+  const CTRL={0x44:'Unconfirmed User Data',0xC4:'Confirmed User Data',0x83:'Unsolicited Response',0xC4:'Application Confirm'};
+  return {startBytes:'0x0564',length:len,control:'0x'+ctrl.toString(16).padStart(2,'0'),destination:dst,source:src,
+    summary:`DNP3 src=${src} dst=${dst} ctrl=0x${ctrl.toString(16)}`};
+}
+
+// Hook IoT/OT into UDP dissector
+function dissectIoTUDP(raw,off,sp,dp,r){
+  // MQTT: port 1883 (plain) or 8883 (TLS)
+  if(sp===1883||dp===1883||sp===8883||dp===8883){
+    const d=dissectMQTT(raw,off+8);
+    if(d){r.proto='MQTT';r.layers.mqtt=d;r.info=d.summary;
+      if(d.usernameFlag||d.passwordFlag) r.suspicions.push({level:'med',msg:'MQTT CONNECT with credentials flag set'});
+      if(!d.usernameFlag&&d.messageType==='CONNECT') r.suspicions.push({level:'low',msg:'MQTT CONNECT with no authentication'});
+      return true;}
+  }
+  // CoAP: port 5683 or 5684
+  if(sp===5683||dp===5683||sp===5684||dp===5684){
+    const d=dissectCoAP(raw,off+8);
+    if(d){r.proto='CoAP';r.layers.coap=d;r.info=d.summary;return true;}
+  }
+  // DNP3: port 20000
+  if(sp===20000||dp===20000){
+    const d=dissectDNP3(raw,off+8);
+    if(d){r.proto='DNP3';r.layers.dnp3=d;r.info=d.summary;return true;}
+  }
+  return false;
+}
+
+// Hook IoT/OT into TCP dissector
+function dissectIoTTCP(raw,off,sp,dp,r,stxt){
+  if(sp===1883||dp===1883||sp===8883||dp===8883){
+    const doff=(u8(raw,off+12)>>4)*4;
+    const d=dissectMQTT(raw,off+doff);
+    if(d){r.proto='MQTT';r.layers.mqtt=d;r.info=d.summary;return true;}
+  }
+  if(sp===502||dp===502){// Modbus TCP
+    const doff=(u8(raw,off+12)>>4)*4;
+    const d=dissectModbus(raw,off+doff);
+    if(d){r.proto='Modbus';r.layers.modbus=d;r.info=d.summary;
+      r.suspicions.push({level:'low',msg:'Modbus TCP — industrial protocol, verify authorized access'});
+      return true;}
+  }
+  if(sp===20000||dp===20000){// DNP3 over TCP
+    const doff=(u8(raw,off+12)>>4)*4;
+    const d=dissectDNP3(raw,off+doff);
+    if(d){r.proto='DNP3';r.layers.dnp3=d;r.info=d.summary;return true;}
+  }
+  if(sp===47808||dp===47808){// BACnet/TCP
+    r.proto='BACnet'; r.info=`BACnet ${sp}→${dp}`;return true;
+  }
+  return false;
+}
+
+// ════════════════════════════════════════════════════════
+//  IoT DASHBOARD VIEW
+// ════════════════════════════════════════════════════════
+function buildIoTView(){
+  const iotProtos=['MQTT','Modbus','CoAP','DNP3','BACnet','BFD','GTP-C','GTP-U'];
+  const iotPkts=ALL.filter(p=>iotProtos.includes(p.proto));
+  const dash=document.getElementById('iotContent');
+
+  if(!iotPkts.length){
+    dash.innerHTML=`<div class="no-data" style="grid-column:1/-1;padding:40px">
+      <div style="font-size:40px;margin-bottom:12px">🔌</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px">No IoT/OT traffic detected</div>
+      <div style="color:var(--text2);font-size:12px">Supported: MQTT (1883/8883), Modbus TCP (502), CoAP (5683), DNP3 (20000), BACnet (47808)</div>
+    </div>`;
+    return;
+  }
+
+  const protoCnt={};
+  iotPkts.forEach(p=>{protoCnt[p.proto]=(protoCnt[p.proto]||0)+1;});
+
+  // MQTT topics
+  const mqttPkts=iotPkts.filter(p=>p.proto==='MQTT');
+  const topics={};
+  mqttPkts.forEach(p=>{if(p.layers.mqtt&&p.layers.mqtt.topic){const t=p.layers.mqtt.topic;topics[t]=(topics[t]||0)+1;}});
+
+  // Modbus functions
+  const modbusPkts=iotPkts.filter(p=>p.proto==='Modbus');
+  const mbFuncs={};
+  modbusPkts.forEach(p=>{if(p.layers.modbus){const f=p.layers.modbus.functionCode;mbFuncs[f]=(mbFuncs[f]||0)+1;}});
+
+  let html='';
+
+  // Overview card
+  html+=`<div class="dash-card" style="grid-column:1/-1">
+    <div class="dc-title"><span class="dc-icon">🔌</span>IoT/OT traffic overview — ${iotPkts.length} packets</div>
+    <div class="metric-row">${Object.entries(protoCnt).map(([p,c])=>`<div class="metric"><div class="metric-val" style="color:${pcol(p)}">${c}</div><div class="metric-lbl">${p}</div></div>`).join('')}</div>
+  </div>`;
+
+  // MQTT topics
+  if(Object.keys(topics).length){
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">📨</span>MQTT topics</div>
+      <table class="flow-table">
+        <thead><tr><th>Topic</th><th>Messages</th></tr></thead>
+        <tbody>${Object.entries(topics).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([t,c])=>`<tr><td style="font-family:var(--mono);color:var(--accent)">${esc(t)}</td><td>${c}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
+  // MQTT security
+  const mqttNoAuth=mqttPkts.filter(p=>p.layers.mqtt&&p.layers.mqtt.messageType==='CONNECT'&&!p.layers.mqtt.usernameFlag);
+  const mqttCreds=mqttPkts.filter(p=>p.layers.mqtt&&p.layers.mqtt.usernameFlag);
+  if(mqttPkts.length){
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">🛡</span>MQTT security</div>
+      <div class="flag-list">
+        ${mqttNoAuth.length?`<div class="flag-item"><span class="flag-sev sev-high">HIGH</span><span class="flag-msg">${mqttNoAuth.length} CONNECT without authentication (pkt${mqttNoAuth.map(p=>' #'+p.idx).join(',')})</span></div>`:''}
+        ${mqttCreds.length?`<div class="flag-item"><span class="flag-sev sev-med">MED</span><span class="flag-msg">${mqttCreds.length} CONNECT with credentials (verify TLS wrapping)</span></div>`:''}
+        ${!mqttNoAuth.length&&!mqttCreds.length?`<div class="flag-item"><span class="flag-sev sev-low">OK</span><span class="flag-msg">No unauthenticated MQTT sessions detected</span></div>`:''}
+      </div>
+    </div>`;
+  }
+
+  // Modbus
+  if(modbusPkts.length){
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">⚙</span>Modbus function codes</div>
+      <table class="flow-table">
+        <thead><tr><th>Function</th><th>Count</th></tr></thead>
+        <tbody>${Object.entries(mbFuncs).sort((a,b)=>b[1]-a[1]).map(([f,c])=>`<tr><td>${esc(f)}</td><td>${c}</td></tr>`).join('')}</tbody>
+      </table>
+      <div class="flag-list" style="margin-top:10px">
+        <div class="flag-item"><span class="flag-sev sev-low">INFO</span><span class="flag-msg">Modbus has no authentication — verify network segmentation (IEC 62443)</span></div>
+      </div>
+    </div>`;
+  }
+
+  // CoAP
+  const coapPkts=iotPkts.filter(p=>p.proto==='CoAP');
+  if(coapPkts.length){
+    const uris={};
+    coapPkts.forEach(p=>{if(p.layers.coap&&p.layers.coap.uri&&p.layers.coap.uri!=='—'){const u=p.layers.coap.uri;uris[u]=(uris[u]||0)+1;}});
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">🌐</span>CoAP resources</div>
+      <table class="flow-table">
+        <thead><tr><th>URI</th><th>Requests</th></tr></thead>
+        <tbody>${Object.entries(uris).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([u,c])=>`<tr><td style="font-family:var(--mono);color:var(--teal)">${esc(u)}</td><td>${c}</td></tr>`).join('')||'<tr><td colspan="2" style="color:var(--text2)">No URI options decoded</td></tr>'}</tbody>
+      </table>
+    </div>`;
+  }
+
+  // Standards compliance hints (EN 303 645)
+  html+=`<div class="dash-card" style="grid-column:1/-1">
+    <div class="dc-title"><span class="dc-icon">📋</span>Standards compliance hints (ETSI EN 303 645 / IEC 62443)</div>
+    <table class="flow-table">
+      <thead><tr><th>Provision</th><th>Observation</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>5.1-1 No universal default passwords</td><td>MQTT unauthenticated sessions: ${mqttNoAuth.length}</td><td style="color:${mqttNoAuth.length?'var(--red)':'var(--green)'}">  ${mqttNoAuth.length?'⚠ Review':'✓ OK'}</td></tr>
+        <tr><td>5.1-2 Credentials not hardcoded</td><td>Modbus has no auth: ${modbusPkts.length} packets</td><td style="color:${modbusPkts.length?'var(--yellow)':'var(--green)'}">  ${modbusPkts.length?'⚠ Segment':'✓ OK'}</td></tr>
+        <tr><td>5.3-1 Communicate securely</td><td>Cleartext IoT protocols detected: ${iotPkts.length}</td><td style="color:${iotPkts.length?'var(--yellow)':'var(--green)'}">  ${iotPkts.length?'⚠ Review TLS use':'✓ OK'}</td></tr>
+        <tr><td>5.5-1 Software integrity</td><td>TFTP transfers (unencrypted update risk)</td><td style="color:${ALL.filter(p=>p.proto==='TFTP').length?'var(--red)':'var(--green)'}">  ${ALL.filter(p=>p.proto==='TFTP').length?'⚠ TFTP found':'✓ OK'}</td></tr>
+      </tbody>
+    </table>
+  </div>`;
+
+  dash.innerHTML=html;
+}
+
+
+// ════════════════════════════════════════════════════════
+//  TELECOM DISSECTORS — SCTP, DIAMETER, GTP-C, PFCP, HTTP/2, PTP, RTCP, CDP, LACP, OSPF, NetFlow
+// ════════════════════════════════════════════════════════
+
+function dissectSCTP(raw, off) {
+  if (raw.length < off + 12) return null;
+  const sp = u16(raw,off), dp = u16(raw,off+2), vtag = u32(raw,off+4), cksum = u32(raw,off+8);
+  const chunks = []; let p = off + 12;
+  const CT = {0:'DATA',1:'INIT',2:'INIT ACK',3:'SACK',4:'HEARTBEAT',5:'HEARTBEAT ACK',6:'ABORT',7:'SHUTDOWN',8:'SHUTDOWN ACK',9:'ERROR',10:'COOKIE ECHO',11:'COOKIE ACK',14:'SHUTDOWN COMPLETE'};
+  while (p + 4 <= raw.length) {
+    const ct = u8(raw,p), cf = u8(raw,p+1), cl = u16(raw,p+2);
+    if (cl < 4) break;
+    const ch = {type: `${CT[ct]||ct} (${ct})`, flags:`0x${hx(cf)}`, length:cl};
+    if (ct === 1 || ct === 2) { ch.initTag = u32(raw,p+4); ch.a_rwnd = u32(raw,p+8); ch.outStreams = u16(raw,p+12); ch.inStreams = u16(raw,p+14); }
+    if (ct === 0) { ch.tsn = u32(raw,p+4); ch.streamID = u16(raw,p+8); ch.streamSeq = u16(raw,p+10); ch.ppid = u32(raw,p+12); }
+    chunks.push(ch);
+    p += (cl + 3) & ~3;
+  }
+  return {srcPort:sp, dstPort:dp, verificationTag:`0x${hx(vtag,8)}`, checksum:`0x${hx(cksum,8)}`,
+    chunkCount:chunks.length, firstChunk:chunks[0]||{},
+    summary:`SCTP ${sp}→${dp} [${chunks.map(c=>c.type.split(' ')[0]).join(',')}]`};
+}
+
+function dissectDiameter(raw, off) {
+  if (raw.length < off + 20) return null;
+  const ver = u8(raw,off);
+  if (ver !== 1) return null;
+  const mlen = (u8(raw,off+1)<<16)|(u8(raw,off+2)<<8)|u8(raw,off+3);
+  const flags = u8(raw,off+4), cmd = (u8(raw,off+5)<<16)|(u8(raw,off+6)<<8)|u8(raw,off+7);
+  const appID = u32(raw,off+8), hhid = u32(raw,off+12), eteid = u32(raw,off+16);
+  const isReq = (flags>>7)&1, isProxy = (flags>>6)&1;
+  const CMDS = {257:'Capabilities-Exchange',258:'Re-Auth',272:'Credit-Control',274:'Abort-Session',275:'Session-Termination',280:'Device-Watchdog',282:'Disconnect-Peer',300:'User-Authorization',301:'Server-Assignment',302:'Location-Info',303:'Multimedia-Auth',304:'Registration-Termination',306:'Push-Profile',316:'Update-Location',318:'Authentication-Information',320:'Cancel-Location',321:'Insert-Subscriber-Data',322:'Delete-Subscriber-Data',323:'Purge-UE',324:'Reset',325:'Notify'};
+  const APPS = {0:'Base',1:'NASREQ',4:'Credit-Control',16777251:'3GPP-S6a',16777236:'3GPP-Rx',16777238:'3GPP-Gx',16777264:'3GPP-Sy'};
+  const avps = []; let p = off + 20;
+  const AVP_NAMES = {1:'User-Name',25:'Class',27:'Session-Timeout',33:'Proxy-State',40:'Acct-Status-Type',44:'Acct-Session-Id',50:'Acct-Multi-Session-Id',55:'Event-Timestamp',85:'Acct-Interim-Interval',257:'Host-IP-Address',258:'Auth-Application-Id',260:'Vendor-Specific-App-Id',263:'Session-Id',264:'Origin-Host',267:'Error-Message',268:'Result-Code',269:'Product-Name',270:'Session-Binding',271:'Session-Server-Failover',272:'Multi-Round-Time-Out',273:'Disconnect-Cause',274:'Auth-Request-Type',276:'Auth-Grace-Period',277:'Auth-Session-State',278:'Origin-State-Id',281:'Error-Reporting-Host',283:'Destination-Realm',284:'Proxy-Info',285:'Re-Auth-Request-Type',291:'Authorization-Lifetime',292:'Redirect-Host',293:'Destination-Host',294:'Error-Reporting-Host',296:'Origin-Realm',299:'Inband-Security-Id',480:'Accounting-Record-Type',485:'Accounting-Record-Number',1:'User-Name'};
+  while (p + 8 <= off + Math.min(mlen, raw.length - off)) {
+    const ac = u32(raw,p), af = u8(raw,p+4), al = (u8(raw,p+5)<<16)|(u8(raw,p+6)<<8)|u8(raw,p+7);
+    if (al < 8 || p + al > raw.length) break;
+    const vd = (af>>7)&1, vm = (af>>6)&1;
+    const vOff = vd ? p+12 : p+8, vLen = al - (vd?12:8);
+    let val = '(binary)';
+    if (vLen > 0 && vLen <= 64) {
+      const vBytes = raw.slice(vOff, vOff+vLen);
+      const vStr = new TextDecoder('utf-8',{fatal:false}).decode(vBytes);
+      if (/^[\x20-\x7E]{1,64}$/.test(vStr)) val = vStr;
+      else if (vLen === 4) val = u32(vBytes,0).toString();
+      else if (vLen === 16) val = ip6(vBytes,0);
+    }
+    if (avps.length < 8) avps.push({code:ac, name:AVP_NAMES[ac]||`AVP-${ac}`, value:val});
+    p += (al + 3) & ~3;
+  }
+  const obj = {version:ver, flags:`R:${isReq} P:${isProxy}`, command:`${cmd} (${CMDS[cmd]||'Unknown'})`,
+    application:`${appID} (${APPS[appID]||'Unknown'})`, hopByHopID:hhid, endToEndID:eteid, avpCount:avps.length};
+  avps.forEach(a => { if (a.name !== `AVP-${a.code}`) obj[a.name] = a.value.substring(0,60); });
+  obj.summary = `Diameter ${isReq?'REQ':'ANS'} ${CMDS[cmd]||cmd} app=${APPS[appID]||appID}`;
+  return obj;
+}
+
+function dissectGTPv2(raw, off) {
+  if (raw.length < off + 8) return null;
+  const flags = u8(raw,off), type = u8(raw,off+1), len = u16(raw,off+2);
+  const hasT = (flags>>3)&1, hasSQ = (flags>>2)&1;
+  const teid = hasT ? u32(raw,off+4) : 0;
+  const seqOff = hasT ? off+8 : off+4;
+  const seq = (u8(raw,seqOff)<<16)|(u8(raw,seqOff+1)<<8)|u8(raw,seqOff+2);
+  const MSGS = {1:'Echo Request',2:'Echo Response',32:'Create Session Request',33:'Create Session Response',34:'Modify Bearer Request',35:'Modify Bearer Response',36:'Delete Session Request',37:'Delete Session Response',38:'Change Notification Request',39:'Change Notification Response',64:'Modify Bearer Command',65:'Modify Bearer Failure',66:'Delete Bearer Command',67:'Delete Bearer Failure',68:'Bearer Resource Command',70:'Create Bearer Request',71:'Create Bearer Response',72:'Update Bearer Request',73:'Update Bearer Response',74:'Delete Bearer Request',75:'Delete Bearer Response',95:'Release Access Bearers Request',96:'Release Access Bearers Response',100:'Downlink Data Notification',176:'Identification Request',177:'Identification Response',178:'Context Request',179:'Context Response',183:'Forward Relocation Request',184:'Forward Relocation Response',240:'RAN Information Relay'};
+  return {version:(flags>>5)&7, TEID:`0x${hx(teid,8)}`, messageType:`${type} (${MSGS[type]||'Unknown'})`, sequence:seq, length:len,
+    summary:`GTPv2 ${MSGS[type]||type} TEID=0x${hx(teid,8)} seq=${seq}`};
+}
+
+function dissectPFCP(raw, off) {
+  if (raw.length < off + 4) return null;
+  const flags = u8(raw,off), type = u8(raw,off+1), len = u16(raw,off+2);
+  const hasS = (flags>>0)&1;
+  const seid = hasS ? ((u32(raw,off+4)*4294967296)+u32(raw,off+8)) : 0;
+  const seq = hasS ? (u8(raw,off+12)<<16)|(u8(raw,off+13)<<8)|u8(raw,off+14) : (u8(raw,off+4)<<16)|(u8(raw,off+5)<<8)|u8(raw,off+6);
+  const MSGS = {1:'Heartbeat Request',2:'Heartbeat Response',3:'PFD Management Request',4:'PFD Management Response',5:'Association Setup Request',6:'Association Setup Response',7:'Association Update Request',8:'Association Update Response',9:'Association Release Request',10:'Association Release Response',50:'Session Establishment Request',51:'Session Establishment Response',52:'Session Modification Request',53:'Session Modification Response',54:'Session Deletion Request',55:'Session Deletion Response',56:'Session Report Request',57:'Session Report Response'};
+  return {flags:`0x${hx(flags)}`, messageType:`${type} (${MSGS[type]||'Unknown'})`, length:len,
+    SEID:hasS?`0x${seid.toString(16)}`:'N/A', sequence:seq,
+    summary:`PFCP ${MSGS[type]||type} seq=${seq}${hasS?' SEID=0x'+seid.toString(16):''}`};
+}
+
+function dissectRTCP(raw, off) {
+  if (raw.length < off + 4) return null;
+  const b0=u8(raw,off), pt=u8(raw,off+1), len=u16(raw,off+2);
+  const rc=b0&0x1F, pad=(b0>>5)&1;
+  const PT = {200:'SR',201:'RR',202:'SDES',203:'BYE',204:'APP',205:'RTPFB',206:'PSFB'};
+  const obj = {packetType:`${pt} (${PT[pt]||'Unknown'})`, reportCount:rc, length:(len+1)*4};
+  if (pt===200&&raw.length>=off+28) {
+    obj.ssrc = `0x${hx(u32(raw,off+4),8)}`;
+    const ntpH=u32(raw,off+8), ntpL=u32(raw,off+12);
+    obj.ntpTimestamp = `${ntpH}.${ntpL}`;
+    obj.rtpTimestamp = u32(raw,off+16);
+    obj.senderPackets = u32(raw,off+20);
+    obj.senderOctets = u32(raw,off+24);
+  }
+  if ((pt===200||pt===201)&&rc>0&&raw.length>=off+32) {
+    const repOff = pt===200?off+28:off+8;
+    obj.lossNumerator = u8(raw,repOff+4);
+    obj.cumulativeLost = (u8(raw,repOff+5)<<16)|(u8(raw,repOff+6)<<8)|u8(raw,repOff+7);
+    obj.jitter = u32(raw,repOff+12);
+    const loss = (obj.lossNumerator/255*100).toFixed(1);
+    obj.lossPercent = loss+'%';
+    if (parseFloat(loss)>5) obj['⚠ HighLoss'] = `${loss}% packet loss detected`;
+  }
+  obj.summary = `RTCP ${PT[pt]||pt}${obj.ssrc?' SSRC='+obj.ssrc:''}${obj.lossPercent?' loss='+obj.lossPercent:''}`;
+  return obj;
+}
+
+function dissectOSPF(raw, off) {
+  if (raw.length < off + 24) return null;
+  const ver=u8(raw,off), type=u8(raw,off+1), plen=u16(raw,off+2);
+  const rid=ip4(raw,off+4), area=ip4(raw,off+8), cksum=u16(raw,off+12), autype=u16(raw,off+14);
+  const TYPES={1:'Hello',2:'DBD',3:'LSR',4:'LSU',5:'LSAck'};
+  const obj={version:ver,messageType:`${type} (${TYPES[type]||'Unknown'})`,routerID:rid,area,checksum:`0x${hx(cksum,4)}`,authType:autype===0?'None':autype===1?'Simple Password':'MD5'};
+  if (type===1&&raw.length>=off+44) {
+    obj.networkMask=ip4(raw,off+24); obj.helloInterval=u16(raw,off+28); obj.deadInterval=u32(raw,off+32);
+    obj.designatedRouter=ip4(raw,off+36); obj.backupDR=ip4(raw,off+40);
+  }
+  if (type===2&&raw.length>=off+32) { obj.mtu=u16(raw,off+26); obj.options=u8(raw,off+28); }
+  obj.summary=`OSPFv${ver} ${TYPES[type]||type} router=${rid} area=${area}`;
+  return obj;
+}
+
+function dissectBGPFull(raw, off) {
+  if (raw.length < off + 19) return null;
+  const len=u16(raw,off+16), type=u8(raw,off+18);
+  const TYPES={1:'OPEN',2:'UPDATE',3:'NOTIFICATION',4:'KEEPALIVE',5:'ROUTE-REFRESH'};
+  const obj={messageType:`${type} (${TYPES[type]||'Unknown'})`,length:len};
+  if (type===1&&raw.length>=off+29) {
+    obj.version=u8(raw,off+19); obj.myAS=u16(raw,off+20); obj.holdTime=u16(raw,off+22);
+    obj.bgpID=ip4(raw,off+24); obj.optParamLen=u8(raw,off+28);
+  }
+  if (type===3&&raw.length>=off+21) {
+    const EC={0:'Message Header',1:'OPEN Message',2:'UPDATE Message',3:'Hold Timer Expired',4:'FSM Error',5:'Cease',6:'ROUTE-REFRESH'};
+    const ESC={5:{0:'MaxPrefixReached',1:'Admin Shutdown',2:'Peer De-Configured',3:'Admin Reset',4:'Connection Rejected',5:'Other Config Change',6:'Conn Collision Resolution',7:'Out of Resources'}};
+    obj.errorCode=`${u8(raw,off+19)} (${EC[u8(raw,off+19)]||'?'})`; obj.errorSubcode=u8(raw,off+20);
+    if(ESC[u8(raw,off+19)]) obj.subcodeName=ESC[u8(raw,off+19)][u8(raw,off+20)]||'';
+  }
+  if (type===2) {
+    // Parse withdrawn routes
+    const wlen=u16(raw,off+19); let p=off+21;
+    const withdrawn=[]; let wp=p;
+    while(wp<p+wlen&&wp<raw.length){const plen=u8(raw,wp);const bytes=Math.ceil(plen/8);wp++;if(wp+bytes>raw.length)break;const pfx=raw.slice(wp,wp+bytes);const net=Array.from({length:4},(_,i)=>pfx[i]||0).join('.');withdrawn.push(`${net}/${plen}`);wp+=bytes;}
+    if(withdrawn.length) obj.withdrawnRoutes=withdrawn.slice(0,5).join(', ')+(withdrawn.length>5?`… +${withdrawn.length-5}`:'');
+    // Parse path attributes  
+    p+=wlen; const palen=u16(raw,p); p+=2;
+    const PA={1:'ORIGIN',2:'AS_PATH',3:'NEXT_HOP',4:'MULTI_EXIT_DISC',5:'LOCAL_PREF',6:'ATOMIC_AGGREGATE',7:'AGGREGATOR',8:'COMMUNITY',9:'ORIGINATOR_ID',10:'CLUSTER_LIST',14:'MP_REACH_NLRI'};
+    let ap=p; const attrs=[];
+    while(ap<p+palen&&ap+3<raw.length){const af=u8(raw,ap),at=u8(raw,ap+1),al=af&0x10?u16(raw,ap+2):u8(raw,ap+2);const avd=af&0x10?4:3;if(at===2){let sp2=ap+avd;let asPath='';while(sp2<ap+avd+al){const st=u8(raw,sp2),sl=u8(raw,sp2+1);sp2+=2;const segs=[];for(let i=0;i<sl&&sp2+1<raw.length;i++,sp2+=2)segs.push(u16(raw,sp2));asPath+=(st===1?'{':'')+(segs.join(' '))+(st===1?'}':'')+' ';}obj.AS_PATH=asPath.trim().substring(0,60);}else if(at===3&&al===4)obj.NEXT_HOP=ip4(raw,ap+avd);else if(at===5&&al===4)obj.LOCAL_PREF=u32(raw,ap+avd);attrs.push(PA[at]||at);ap+=avd+al;}
+    obj.pathAttributes=attrs.join(', ');
+  }
+  obj.summary=`BGP ${TYPES[type]||type}${obj.myAS?' AS='+obj.myAS:''}${obj.AS_PATH?' PATH='+obj.AS_PATH:''}${obj.NEXT_HOP?' NH='+obj.NEXT_HOP:''}`;
+  return obj;
+}
+
+function dissectSTPFull(raw, off) {
+  if (raw.length < off + 4) return null;
+  // LLC header already consumed — raw here is after ETH frame
+  // STP BPDU starts with protocol ID (2 bytes) = 0x0000
+  const proto=u16(raw,off), ver=u8(raw,off+2), type=u8(raw,off+3);
+  if (proto !== 0) return null;
+  const TYPES={0:'Config BPDU',0x80:'TCN BPDU',2:'RSTP BPDU'};
+  const obj={protocol:proto,version:ver,bpduType:`${type} (${TYPES[type]||'Unknown'})`};
+  if (type===0&&raw.length>=off+35) {
+    obj.flags=`0x${hx(u8(raw,off+4))}`;
+    const rc=u32(raw,off+5); obj.rootCost=rc;
+    obj.rootBridgeID=`${hx(u8(raw,off+5),2)}:${mac(raw,off+7)}`;
+    obj.bridgeID=`${hx(u8(raw,off+17),2)}:${mac(raw,off+19)}`;
+    obj.portID=`0x${hx(u16(raw,off+29),4)}`;
+    obj.messageAge=u16(raw,off+31)/256+'s';
+    obj.maxAge=u16(raw,off+33)/256+'s';
+    obj.helloTime=u16(raw,off+35)/256+'s';
+    const tcFlag=(u8(raw,off+4))&1, tcaFlag=(u8(raw,off+4)>>7)&1;
+    if(tcFlag) obj['⚠ TopologyChange']='TC flag set — possible network instability';
+    if(tcaFlag) obj.TCA='Topology Change Acknowledgement';
+  }
+  obj.summary=`STP ${TYPES[type]||type}${obj.rootBridgeID?' root='+obj.rootBridgeID:''}`;
+  return obj;
+}
+
+function dissectLACP(raw, off) {
+  if (raw.length < off + 4) return null;
+  const subtype=u8(raw,off), ver=u8(raw,off+1);
+  if (subtype !== 1) return null;
+  const parseInfo = (p) => ({
+    sysPri:u16(raw,p), sysID:mac(raw,p+2), key:u16(raw,p+8),
+    portPri:u16(raw,p+10), port:u16(raw,p+12),
+    state:`0x${hx(u8(raw,p+14))}`,
+    activity:u8(raw,p+14)&1?'Active':'Passive',
+    timeout:(u8(raw,p+14)>>1)&1?'Short':'Long',
+    aggregation:(u8(raw,p+14)>>2)&1?'Yes':'No',
+    synchronization:(u8(raw,p+14)>>3)&1?'Yes':'No',
+    collecting:(u8(raw,p+14)>>4)&1?'Yes':'No',
+    distributing:(u8(raw,p+14)>>5)&1?'Yes':'No',
+  });
+  const actor = off+4+2 <= raw.length ? parseInfo(off+4+2) : {};
+  const partner = off+4+2+20 <= raw.length ? parseInfo(off+4+2+20) : {};
+  return {subtype,version:ver,
+    actorSystemID:actor.sysID,actorPort:actor.port,actorKey:actor.key,actorActivity:actor.activity,actorState:actor.state,
+    partnerSystemID:partner.sysID,partnerPort:partner.port,partnerKey:partner.key,partnerActivity:partner.activity,
+    summary:`LACP Actor=${actor.sysID} port=${actor.port} Partner=${partner.sysID} port=${partner.port}`};
+}
+
+function dissectCDP(raw, off) {
+  if (raw.length < off + 4) return null;
+  const ver=u8(raw,off), ttl=u8(raw,off+1);
+  const obj={version:ver,TTL:ttl+'s'};
+  let p=off+4;
+  while(p+4<=raw.length){
+    const type=u16(raw,p), len=u16(raw,p+2);
+    if(len<4||p+len>raw.length) break;
+    const val=raw.slice(p+4,p+len);
+    const str=new TextDecoder('utf-8',{fatal:false}).decode(val).replace(/\0/g,'').trim();
+    if(type===1)obj.deviceID=str.substring(0,60);
+    else if(type===3)obj.portID=str.substring(0,40);
+    else if(type===4)obj.capabilities=`0x${hx(u32(val,0),8)}`;
+    else if(type===5)obj.iosVersion=str.substring(0,60);
+    else if(type===6)obj.platform=str.substring(0,40);
+    else if(type===7){const n=u16(val,2);const pfx=ip4(val,4)+'/'+n;obj.IPAddress=pfx;}
+    else if(type===10)obj.nativeVLAN=u16(val,0);
+    else if(type===11)obj.duplex=u8(val,0)?'Full':'Half';
+    p+=len;
+    if(Object.keys(obj).length>10)break;
+  }
+  obj.summary=`CDP from ${obj.deviceID||'?'} port=${obj.portID||'?'} ${obj.platform||''}`;
+  return obj;
+}
+
+function dissectPTP(raw, off) {
+  if (raw.length < off + 34) return null;
+  const tsc=(u8(raw,off)>>4)&0xF, msgType=u8(raw,off)&0xF, ver=u8(raw,off+1)&0xF;
+  const msgLen=u16(raw,off+2), domain=u8(raw,off+4), flags=u16(raw,off+6);
+  const corr=u32(raw,off+8), srcPortID=mac(raw,off+20)+':'+u16(raw,off+26);
+  const seqID=u16(raw,off+30), ctrl=u8(raw,off+32), logMsgInterval=u8(raw,off+33);
+  const MSGS={0:'Sync',1:'Delay_Req',2:'Pdelay_Req',3:'Pdelay_Resp',8:'Follow_Up',9:'Delay_Resp',10:'Pdelay_Resp_Follow_Up',11:'Announce',12:'Signaling',13:'Management'};
+  const obj={version:ver,messageType:`${msgType} (${MSGS[msgType]||'Unknown'})`,domain,sequenceID:seqID,
+    sourcePortID:srcPortID,correction:corr,logMessageInterval:logMsgInterval};
+  if(msgType===11&&raw.length>=off+64){
+    const gmID=mac(raw,off+44)+':'+u16(raw,off+50);
+    obj.grandmasterID=gmID; obj.grandmasterPriority1=u8(raw,off+40); obj.grandmasterPriority2=u8(raw,off+55);
+    obj.stepsRemoved=u16(raw,off+56); obj.timeSource=u8(raw,off+58);
+  }
+  obj.summary=`PTP ${MSGS[msgType]||msgType} domain=${domain} seq=${seqID}`;
+  return obj;
+}
+
+function dissectNetFlow(raw, off) {
+  if (raw.length < off + 24) return null;
+  const ver=u16(raw,off), count=u16(raw,off+2), uptime=u32(raw,off+4);
+  const epoch=u32(raw,off+8), seq=u32(raw,off+16), engType=u8(raw,off+20), engID=u8(raw,off+21);
+  const obj={version:ver, flowCount:count, sequence:seq, engineType:engType, engineID:engID};
+  const flows=[];
+  if(ver===5&&raw.length>=off+24+count*48){
+    for(let i=0;i<Math.min(count,5);i++){
+      const fp=off+24+i*48;
+      flows.push({srcIP:ip4(raw,fp),dstIP:ip4(raw,fp+4),nexthop:ip4(raw,fp+8),
+        packets:u32(raw,fp+16),bytes:u32(raw,fp+20),
+        srcPort:u16(raw,fp+32),dstPort:u16(raw,fp+34),proto:u8(raw,fp+38),tos:u8(raw,fp+39)});
+    }
+  }
+  if(flows.length) obj.sampleFlow=`${flows[0].srcIP}:${flows[0].srcPort}→${flows[0].dstIP}:${flows[0].dstPort} proto=${flows[0].proto} bytes=${flows[0].bytes}`;
+  obj.summary=`NetFlow v${ver} ${count} flow${count!==1?'s':''} seq=${seq}`;
+  return obj;
+}
+
+function dissectTLSCiphers(raw, off) {
+  // Extract cipher suites from TLS ClientHello
+  if (raw.length < off + 5) return null;
+  const ct=u8(raw,off); if(ct!==22) return null; // must be Handshake
+  const ver=u16(raw,off+1); const recLen=u16(raw,off+3);
+  if (raw.length < off+5+recLen) return null;
+  const ht=u8(raw,off+5); if(ht!==1) return null; // must be ClientHello
+  const hsLen=(u8(raw,off+6)<<16)|(u8(raw,off+7)<<8)|u8(raw,off+8);
+  let p=off+9;
+  const clientVer=u16(raw,p); p+=2; p+=32; // skip random
+  const sessLen=u8(raw,p); p+=1+sessLen;
+  if(p+2>raw.length) return null;
+  const csLen=u16(raw,p); p+=2;
+  const ciphers=[];
+  for(let i=0;i<csLen/2&&p+1<raw.length;i++,p+=2) ciphers.push(u16(raw,p));
+  const WEAK={0x0005:'RC4-SHA',0x0004:'RC4-MD5',0x000A:'DES-CBC3-SHA',0x0035:'AES256-CBC-SHA (no PFS)',0x002F:'AES128-CBC-SHA (no PFS)',0x0001:'NULL-MD5',0x0002:'NULL-SHA',0x000B:'DH-anon-EXPORT',0x0017:'RC4 EXPORT',0x0018:'RC4-40-MD5',0x0019:'DH-anon EXPORT',0x001A:'DH-anon EXPORT',0x0003:'EXP-RC4-MD5'};
+  const STRONG={0x1301:'TLS_AES_128_GCM_SHA256 (TLS1.3)',0x1302:'TLS_AES_256_GCM_SHA384 (TLS1.3)',0x1303:'TLS_CHACHA20_POLY1305 (TLS1.3)',0xC02B:'ECDHE-ECDSA-AES128-GCM-SHA256',0xC02C:'ECDHE-ECDSA-AES256-GCM-SHA384',0xC02F:'ECDHE-RSA-AES128-GCM-SHA256',0xC030:'ECDHE-RSA-AES256-GCM-SHA384',0xCCA8:'ECDHE-RSA-CHACHA20-POLY1305',0xCCA9:'ECDHE-ECDSA-CHACHA20-POLY1305'};
+  const VER={0x0301:'TLS 1.0',0x0302:'TLS 1.1',0x0303:'TLS 1.2',0x0304:'TLS 1.3'};
+  const weakFound=ciphers.filter(c=>WEAK[c]);
+  const strongFound=ciphers.filter(c=>STRONG[c]);
+  return {clientVersion:VER[clientVer]||`0x${hx(clientVer,4)}`, totalCiphers:ciphers.length,
+    strongCiphers:strongFound.map(c=>STRONG[c]).join(', ').substring(0,100)||'None',
+    weakCiphers:weakFound.map(c=>WEAK[c]).join(', ').substring(0,100)||'None',
+    hasTLS13:ciphers.some(c=>c>=0x1301&&c<=0x1303),
+    hasPFS:ciphers.some(c=>STRONG[c]&&STRONG[c].includes('ECDHE')),
+    allCipherHex:ciphers.slice(0,10).map(c=>`0x${hx(c,4)}`).join(' ')};
+}
+
+
+// ════════════════════════════════════════════════════════
+//  VoIP CALL TRACKER
+// ════════════════════════════════════════════════════════
+function buildVoIPView(){
+  const dash=document.getElementById('voipContent');
+  const sipPkts=ALL.filter(p=>p.proto==='SIP');
+  const rtpPkts=ALL.filter(p=>p.proto==='RTP');
+  const rtcpPkts=ALL.filter(p=>p.proto==='RTCP');
+  if(!sipPkts.length&&!rtpPkts.length){
+    dash.innerHTML='<div class="no-data" style="grid-column:1/-1;padding:40px"><div style="font-size:36px;margin-bottom:12px">☎</div><div style="font-size:14px;font-weight:600;color:var(--text)">No VoIP traffic detected</div><div style="color:var(--text2);font-size:12px;margin-top:6px">Supports: SIP (5060/5061), RTP (heuristic), RTCP</div></div>';
+    return;
+  }
+
+  // Parse SIP call legs
+  const calls={};
+  sipPkts.forEach(p=>{
+    const L=p.layers.sip||{};
+    const ci=L.callID||p.info.match(/Call-ID:\s*([^\r\n]+)/i)?.[1]||'unknown';
+    if(!calls[ci]) calls[ci]={callID:ci,pkts:[],invite:null,ringing:null,answer:null,bye:null,cancel:null,from:'',to:'',codec:'unknown',state:'setup',startTs:p.ts,endTs:p.ts};
+    const c=calls[ci];
+    c.pkts.push(p); c.endTs=p.ts;
+    if(L.from&&!c.from) c.from=L.from.match(/<sip:([^>@]+)/)?.[1]||L.from.substring(0,30);
+    if(L.to&&!c.to)   c.to=L.to.match(/<sip:([^>@]+)/)?.[1]||L.to.substring(0,30);
+    const line=(L.requestLine||'').trim();
+    if(/^INVITE/i.test(line)&&!c.invite) c.invite=p.ts;
+    if(/^180|^183/i.test(line)&&!c.ringing) c.ringing=p.ts;
+    if(/^200/i.test(line)&&c.invite&&!c.answer) c.answer=p.ts;
+    if(/^BYE/i.test(line)&&!c.bye) c.bye=p.ts;
+    if(/^CANCEL/i.test(line)) c.cancel=p.ts;
+    // State machine
+    if(c.bye||c.cancel) c.state=c.cancel?'cancelled':'completed';
+    else if(c.answer) c.state='active';
+    else if(c.ringing) c.state='ringing';
+  });
+
+  // RTCP quality per SSRC
+  const rtcpQuality={};
+  rtcpPkts.forEach(p=>{
+    const L=p.layers.rtcp||{};
+    if(L.ssrc){if(!rtcpQuality[L.ssrc])rtcpQuality[L.ssrc]={loss:parseFloat(L.lossPercent)||0,jitter:parseInt(L.jitter)||0,packets:0};rtcpQuality[L.ssrc].packets++;}
+  });
+
+  const callList=Object.values(calls).sort((a,b)=>a.startTs-b.startTs);
+  const t0=ALL.length?ALL[0].ts:0;
+
+  // MOS estimate from RTCP loss/jitter
+  function mosEstimate(ssrc){
+    const q=Object.values(rtcpQuality)[0];
+    if(!q) return null;
+    const loss=q.loss,jitter=q.jitter;
+    if(loss===0&&jitter<10) return {score:'4.3',grade:'good'};
+    if(loss<1&&jitter<30)   return {score:'3.8',grade:'good'};
+    if(loss<3&&jitter<50)   return {score:'3.2',grade:'fair'};
+    if(loss<5)               return {score:'2.6',grade:'fair'};
+    return {score:'1.8',grade:'poor'};
+  }
+
+  // State color
+  const stateCol={completed:'var(--green)',active:'var(--accent)',ringing:'var(--yellow)',setup:'var(--text2)',cancelled:'var(--red)'};
+
+  let html='';
+  // Summary
+  html+=`<div class="dash-card" style="grid-column:1/-1">
+    <div class="dc-title"><span class="dc-icon">☎</span>VoIP call analysis</div>
+    <div class="metric-row">
+      <div class="metric"><div class="metric-val" style="color:var(--accent)">${callList.length}</div><div class="metric-lbl">SIP Calls</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--green)">${callList.filter(c=>c.state==='completed').length}</div><div class="metric-lbl">Completed</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--red)">${callList.filter(c=>c.state==='cancelled').length}</div><div class="metric-lbl">Failed/Cancelled</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--yellow)">${rtpPkts.length}</div><div class="metric-lbl">RTP Packets</div></div>
+      <div class="metric"><div class="metric-val">${rtcpPkts.length}</div><div class="metric-lbl">RTCP Reports</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--purple)">${Object.keys(rtcpQuality).length}</div><div class="metric-lbl">RTP Streams</div></div>
+    </div>
+  </div>`;
+
+  // Call table
+  if(callList.length){
+    html+=`<div class="dash-card" style="grid-column:1/-1">
+      <div class="dc-title"><span class="dc-icon">📋</span>Call detail records</div>
+      <table class="call-table">
+        <thead><tr><th>#</th><th>From</th><th>To</th><th>State</th><th>Setup</th><th>Duration</th><th>Packets</th><th>MOS</th></tr></thead>
+        <tbody>${callList.map((c,i)=>{
+          const dur=c.answer&&c.bye?(c.bye-c.answer).toFixed(1)+'s':c.answer?'active':'—';
+          const setup=c.invite&&c.answer?(((c.answer-c.invite)*1000).toFixed(0)+'ms'):'—';
+          const mos=mosEstimate();
+          const mosPill=mos?`<span class="mos-pill mos-${mos.grade}">${mos.score}</span>`:'—';
+          return `<tr><td>${i+1}</td><td>${esc(c.from||'?')}</td><td>${esc(c.to||'?')}</td>
+            <td style="color:${stateCol[c.state]||'var(--text2)'};font-weight:600">${c.state}</td>
+            <td>${setup}</td><td>${dur}</td><td>${c.pkts.length}</td><td>${mosPill}</td></tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
+  // RTCP quality
+  if(Object.keys(rtcpQuality).length){
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">📊</span>RTP stream quality (from RTCP)</div>
+      <table class="call-table">
+        <thead><tr><th>SSRC</th><th>Loss %</th><th>Jitter</th><th>Reports</th></tr></thead>
+        <tbody>${Object.entries(rtcpQuality).map(([ssrc,q])=>
+          `<tr><td>${ssrc}</td><td style="color:${q.loss>5?'var(--red)':q.loss>1?'var(--yellow)':'var(--green)'}">${q.loss.toFixed(1)}%</td><td>${q.jitter}</td><td>${q.packets}</td></tr>`
+        ).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
+  // SIP security
+  const optFlood=sipPkts.filter(p=>/^OPTIONS/i.test((p.layers.sip||{}).requestLine||''));
+  const invFlood=sipPkts.filter(p=>/^INVITE/i.test((p.layers.sip||{}).requestLine||''));
+  html+=`<div class="dash-card">
+    <div class="dc-title"><span class="dc-icon">🛡</span>SIP security</div>
+    <div class="flag-list">
+      ${optFlood.length>10?`<div class="flag-item"><span class="flag-sev sev-high">HIGH</span><span class="flag-msg">${optFlood.length} OPTIONS requests — possible SIP scanning</span></div>`:''}
+      ${invFlood.length>20?`<div class="flag-item"><span class="flag-sev sev-med">MED</span><span class="flag-msg">${invFlood.length} INVITE requests — monitor for toll fraud</span></div>`:''}
+      ${sipPkts.some(p=>p.src.includes(':5060')&&p.proto==='SIP'&&/(REGISTER|INVITE)/i.test((p.layers.sip||{}).requestLine||'')&&!p.dst.includes('443'))?`<div class="flag-item"><span class="flag-sev sev-med">MED</span><span class="flag-msg">SIP over UDP/5060 (cleartext) — consider TLS/5061</span></div>`:''}
+      ${!optFlood.length&&!invFlood.length?`<div class="flag-item"><span class="flag-sev sev-low">OK</span><span class="flag-msg">No obvious SIP attacks detected</span></div>`:''}
+    </div>
+  </div>`;
+
+  dash.innerHTML=html;
+}
+
+// ════════════════════════════════════════════════════════
+//  ROUTING HEALTH VIEW
+// ════════════════════════════════════════════════════════
+function buildRoutingView(){
+  const dash=document.getElementById('routingContent');
+  const bgpPkts=ALL.filter(p=>p.proto==='BGP');
+  const ospfPkts=ALL.filter(p=>p.proto==='OSPF'||(p.layers&&p.layers.ospf));
+  const stpPkts=ALL.filter(p=>p.proto==='STP'||(p.layers&&p.layers.stp));
+  const vrrpPkts=ALL.filter(p=>p.proto==='VRRP');
+  const lacpPkts=ALL.filter(p=>p.proto==='LACP');
+  const cdpPkts=ALL.filter(p=>p.proto==='CDP');
+  const ripPkts=ALL.filter(p=>p.proto==='RIP'||p.proto==='RIPng');
+
+  if(!bgpPkts.length&&!ospfPkts.length&&!stpPkts.length&&!lacpPkts.length&&!cdpPkts.length&&!ripPkts.length){
+    dash.innerHTML='<div class="no-data" style="grid-column:1/-1;padding:40px"><div style="font-size:36px;margin-bottom:12px">🗺</div><div style="font-size:14px;font-weight:600;color:var(--text)">No routing/control-plane traffic detected</div><div style="color:var(--text2);font-size:12px;margin-top:6px">Supports: BGP, OSPF, STP/RSTP, LACP, CDP, RIP, VRRP</div></div>';
+    return;
+  }
+
+  let html='';
+
+  // Overview
+  html+=`<div class="dash-card" style="grid-column:1/-1">
+    <div class="dc-title"><span class="dc-icon">🗺</span>Control plane overview</div>
+    <div class="metric-row">
+      <div class="metric"><div class="metric-val" style="color:#60a5fa">${bgpPkts.length}</div><div class="metric-lbl">BGP</div></div>
+      <div class="metric"><div class="metric-val" style="color:#3b82f6">${ospfPkts.length}</div><div class="metric-lbl">OSPF</div></div>
+      <div class="metric"><div class="metric-val" style="color:#22c55e">${stpPkts.length}</div><div class="metric-lbl">STP</div></div>
+      <div class="metric"><div class="metric-val" style="color:#4ade80">${lacpPkts.length}</div><div class="metric-lbl">LACP</div></div>
+      <div class="metric"><div class="metric-val" style="color:#f97316">${cdpPkts.length}</div><div class="metric-lbl">CDP</div></div>
+      <div class="metric"><div class="metric-val" style="color:#9ca3af">${vrrpPkts.length}</div><div class="metric-lbl">VRRP</div></div>
+    </div>
+  </div>`;
+
+  // BGP analysis
+  if(bgpPkts.length){
+    const bgpTypes={};
+    bgpPkts.forEach(p=>{const t=(p.layers.bgp||{}).messageType||'?';bgpTypes[t]=(bgpTypes[t]||0)+1;});
+    const notifs=bgpPkts.filter(p=>/(NOTIFICATION)/i.test((p.layers.bgp||{}).messageType||''));
+    const opens=bgpPkts.filter(p=>/(OPEN)/i.test((p.layers.bgp||{}).messageType||''));
+    const asnSet=new Set(bgpPkts.map(p=>(p.layers.bgp||{}).myAS).filter(Boolean));
+    const pfxSet=new Set();
+    bgpPkts.forEach(p=>{if(p.layers.bgp&&p.layers.bgp.withdrawnRoutes)p.layers.bgp.withdrawnRoutes.split(', ').forEach(r=>pfxSet.add(r));});
+
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">🗺</span>BGP session analysis</div>
+      <table class="mini-table">
+        ${Object.entries(bgpTypes).map(([t,c])=>`<tr><td>${esc(t)}</td><td style="text-align:right;color:var(--text)">${c}</td></tr>`).join('')}
+      </table>
+      ${asnSet.size?`<div style="margin-top:8px;font-size:10px;color:var(--text2)">ASNs seen: <span style="color:var(--accent);font-family:var(--mono)">${[...asnSet].join(', ')}</span></div>`:''}
+      ${pfxSet.size?`<div style="margin-top:4px;font-size:10px;color:var(--text2)">Withdrawn prefixes: <span style="color:var(--red);font-family:var(--mono)">${[...pfxSet].slice(0,5).join(', ')}</span></div>`:''}
+      ${notifs.length?`<div class="flag-list" style="margin-top:10px"><div class="flag-item"><span class="flag-sev sev-high">HIGH</span><span class="flag-msg">${notifs.length} BGP NOTIFICATION${notifs.length>1?'s':''} — session reset/error${notifs[0].layers.bgp&&notifs[0].layers.bgp.errorCode?': '+notifs[0].layers.bgp.errorCode:''}</span></div></div>`:''}
+    </div>`;
+
+    // BGP router topology (simple node list)
+    const routers=new Map();
+    bgpPkts.forEach(p=>{
+      const src=p.src.split(':')[0],dst=p.dst.split(':')[0];
+      if(!routers.has(src)) routers.set(src,{ip:src,as:(p.layers.bgp||{}).myAS||'?',peers:new Set()});
+      routers.get(src).peers.add(dst);
+    });
+    if(routers.size){
+      html+=`<div class="dash-card">
+        <div class="dc-title"><span class="dc-icon">🕸</span>BGP peer relationships</div>
+        <table class="flow-table">
+          <thead><tr><th>Router</th><th>AS</th><th>Peers</th></tr></thead>
+          <tbody>${[...routers.values()].slice(0,8).map(r=>`<tr><td>${r.ip}</td><td>${r.as}</td><td>${[...r.peers].join(', ')}</td></tr>`).join('')}</tbody>
+        </table>
+      </div>`;
+    }
+  }
+
+  // OSPF
+  if(ospfPkts.length){
+    const ospfTypes={};
+    ospfPkts.forEach(p=>{const t=(p.layers.ospf||{}).messageType||'?';ospfTypes[t]=(ospfTypes[t]||0)+1;});
+    const routers=new Set(ospfPkts.map(p=>(p.layers.ospf||{}).routerID).filter(Boolean));
+    const areas=new Set(ospfPkts.map(p=>(p.layers.ospf||{}).area).filter(Boolean));
+    const dupRIDs={}; ospfPkts.forEach(p=>{const r=(p.layers.ospf||{}).routerID;if(r){dupRIDs[r]=(dupRIDs[r]||new Set());dupRIDs[r].add(p.src.split(':')[0]);}});
+    const conflicts=Object.entries(dupRIDs).filter(([r,ips])=>ips.size>1);
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">🕸</span>OSPF adjacency</div>
+      <table class="mini-table">
+        ${Object.entries(ospfTypes).map(([t,c])=>`<tr><td>${esc(t)}</td><td style="text-align:right;color:var(--text)">${c}</td></tr>`).join('')}
+      </table>
+      <div style="margin-top:8px;font-size:10px;color:var(--text2)">Routers: <span style="color:var(--accent);font-family:var(--mono)">${[...routers].join(', ')}</span></div>
+      <div style="margin-top:4px;font-size:10px;color:var(--text2)">Areas: <span style="color:var(--teal);font-family:var(--mono)">${[...areas].join(', ')}</span></div>
+      ${conflicts.length?`<div class="flag-list" style="margin-top:10px">${conflicts.map(([r,ips])=>`<div class="flag-item"><span class="flag-sev sev-high">HIGH</span><span class="flag-msg">Duplicate OSPF Router-ID ${r} from ${[...ips].join(' and ')} — misconfiguration!</span></div>`).join('')}</div>`:''}
+    </div>`;
+  }
+
+  // STP
+  if(stpPkts.length){
+    const tcPkts=stpPkts.filter(p=>p.layers.stp&&p.layers.stp['⚠ TopologyChange']);
+    const roots=new Set(stpPkts.map(p=>(p.layers.stp||{}).rootBridgeID).filter(Boolean));
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">🌲</span>STP / RSTP analysis</div>
+      <div class="metric-row">
+        <div class="metric"><div class="metric-val">${stpPkts.length}</div><div class="metric-lbl">BPDUs</div></div>
+        <div class="metric"><div class="metric-val" style="color:${tcPkts.length?'var(--red)':'var(--green)'}">${tcPkts.length}</div><div class="metric-lbl">TC events</div></div>
+        <div class="metric"><div class="metric-val">${roots.size}</div><div class="metric-lbl">Root bridges</div></div>
+      </div>
+      ${roots.size?`<div style="font-size:10px;color:var(--text2);margin-top:6px">Root: <span style="color:var(--accent);font-family:var(--mono)">${[...roots][0]}</span></div>`:''}
+      ${tcPkts.length>5?`<div class="flag-list" style="margin-top:8px"><div class="flag-item"><span class="flag-sev sev-high">HIGH</span><span class="flag-msg">${tcPkts.length} STP topology changes — possible loop or instability</span></div></div>`:''}
+      ${roots.size>1?`<div class="flag-list" style="margin-top:8px"><div class="flag-item"><span class="flag-sev sev-high">HIGH</span><span class="flag-msg">Multiple root bridges detected (${roots.size}) — network partition or attack</span></div></div>`:''}
+    </div>`;
+  }
+
+  // LACP & CDP
+  if(lacpPkts.length||cdpPkts.length){
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">🔗</span>L2 discovery</div>
+      ${lacpPkts.length?`<div style="margin-bottom:10px">
+        <div style="font-size:10px;font-weight:600;color:#4ade80;margin-bottom:6px">LACP — ${lacpPkts.length} PDUs</div>
+        <table class="mini-table">${lacpPkts.slice(0,3).map(p=>{const L=p.layers.lacp||{};return`<tr><td>${L.actorSystemID||'?'}</td><td style="text-align:right;color:var(--text)">port ${L.actorPort||'?'} key ${L.actorKey||'?'} ${L.actorActivity||''}</td></tr>`;}).join('')}</table>
+      </div>`:''}
+      ${cdpPkts.length?`<div>
+        <div style="font-size:10px;font-weight:600;color:#f97316;margin-bottom:6px">CDP — ${cdpPkts.length} packets</div>
+        <table class="mini-table">${cdpPkts.slice(0,4).map(p=>{const L=p.layers.cdp||{};return`<tr><td>${L.deviceID||'?'}</td><td style="text-align:right;color:var(--text)">${L.platform||''} ${L.portID||''}</td></tr>`;}).join('')}</table>
+      </div>`:''}
+    </div>`;
+  }
+
+  dash.innerHTML=html;
+}
+
+// ════════════════════════════════════════════════════════
+//  5G / TELECOM VIEW
+// ════════════════════════════════════════════════════════
+function buildTelecomView(){
+  const dash=document.getElementById('telecomContent');
+  const sctpPkts=ALL.filter(p=>p.proto==='SCTP'||p.proto==='Diameter/SCTP'||p.proto==='SCTP-S1AP'||p.proto==='SCTP-M3UA');
+  const diamPkts=ALL.filter(p=>p.proto==='Diameter'||p.proto==='Diameter/SCTP');
+  const gtpPkts=ALL.filter(p=>p.proto==='GTP-C'||p.proto==='GTP-U');
+  const pfcpPkts=ALL.filter(p=>p.proto==='PFCP');
+  const ptpPkts=ALL.filter(p=>p.proto==='PTP');
+  const netflowPkts=ALL.filter(p=>p.proto==='NetFlow');
+  const rtcpPkts=ALL.filter(p=>p.proto==='RTCP');
+
+  if(!sctpPkts.length&&!diamPkts.length&&!gtpPkts.length&&!pfcpPkts.length&&!ptpPkts.length&&!netflowPkts.length){
+    dash.innerHTML='<div class="no-data" style="grid-column:1/-1;padding:40px"><div style="font-size:36px;margin-bottom:12px">📡</div><div style="font-size:14px;font-weight:600;color:var(--text)">No 5G/telecom-specific traffic detected</div><div style="color:var(--text2);font-size:12px;margin-top:6px">Supports: SCTP, Diameter (3868), GTP-C (2123), GTP-U (2152), PFCP (8805), PTP, NetFlow</div></div>';
+    return;
+  }
+
+  let html='';
+
+  // 3GPP interface map
+  html+=`<div class="dash-card" style="grid-column:1/-1">
+    <div class="dc-title"><span class="dc-icon">📡</span>3GPP interface detection</div>
+    <div class="metric-row">
+      <div class="metric"><div class="metric-val" style="color:#60a5fa">${sctpPkts.length}</div><div class="metric-lbl">SCTP</div></div>
+      <div class="metric"><div class="metric-val" style="color:#c084fc">${diamPkts.length}</div><div class="metric-lbl">Diameter</div></div>
+      <div class="metric"><div class="metric-val" style="color:#38bdf8">${gtpPkts.filter(p=>p.proto==='GTP-C').length}</div><div class="metric-lbl">GTP-C</div></div>
+      <div class="metric"><div class="metric-val" style="color:#0ea5e9">${gtpPkts.filter(p=>p.proto==='GTP-U').length}</div><div class="metric-lbl">GTP-U</div></div>
+      <div class="metric"><div class="metric-val" style="color:#22d3ee">${pfcpPkts.length}</div><div class="metric-lbl">PFCP (N4)</div></div>
+      <div class="metric"><div class="metric-val" style="color:#e879f9">${ptpPkts.length}</div><div class="metric-lbl">PTP</div></div>
+    </div>
+    <div style="margin-top:12px;font-size:10px;color:var(--text2);line-height:2">
+      ${sctpPkts.some(p=>p.proto==='SCTP-S1AP')?'<span style="background:rgba(167,139,250,.15);color:#a78bfa;border-radius:3px;padding:2px 7px;margin-right:6px">S1-MME (S1AP)</span>':''} 
+      ${diamPkts.length?'<span style="background:rgba(192,132,252,.15);color:#c084fc;border-radius:3px;padding:2px 7px;margin-right:6px">S6a/Gx/Rx (Diameter)</span>':''} 
+      ${gtpPkts.filter(p=>p.proto==='GTP-C').length?'<span style="background:rgba(56,189,248,.15);color:#38bdf8;border-radius:3px;padding:2px 7px;margin-right:6px">S11/S5/S8 (GTPv2-C)</span>':''} 
+      ${gtpPkts.filter(p=>p.proto==='GTP-U').length?'<span style="background:rgba(14,165,233,.15);color:#0ea5e9;border-radius:3px;padding:2px 7px;margin-right:6px">S1-U/S5-U (GTP-U)</span>':''} 
+      ${pfcpPkts.length?'<span style="background:rgba(34,211,238,.15);color:#22d3ee;border-radius:3px;padding:2px 7px;margin-right:6px">N4 (PFCP/5GC)</span>':''} 
+      ${ptpPkts.length?'<span style="background:rgba(232,121,249,.15);color:#e879f9;border-radius:3px;padding:2px 7px;margin-right:6px">Fronthaul Timing (PTP)</span>':''}
+    </div>
+  </div>`;
+
+  // Diameter
+  if(diamPkts.length){
+    const cmds={};
+    diamPkts.forEach(p=>{const c=(p.layers.diameter||{}).command||'?';cmds[c]=(cmds[c]||0)+1;});
+    const apps=new Set(diamPkts.map(p=>(p.layers.diameter||{}).application).filter(Boolean));
+    const results=diamPkts.filter(p=>p.layers.diameter&&p.layers.diameter['Result-Code']);
+    const errors=results.filter(p=>{const rc=parseInt(p.layers.diameter['Result-Code']);return rc&&rc>=3000;});
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">🔢</span>Diameter command analysis</div>
+      <table class="mini-table">${Object.entries(cmds).slice(0,8).map(([c,n])=>`<tr><td>${esc(c)}</td><td style="text-align:right;color:var(--text)">${n}</td></tr>`).join('')}</table>
+      <div style="margin-top:8px;font-size:10px;color:var(--text2)">Applications: <span style="color:var(--purple);font-family:var(--mono)">${[...apps].join(', ')}</span></div>
+      ${errors.length?`<div class="flag-list" style="margin-top:8px"><div class="flag-item"><span class="flag-sev sev-high">HIGH</span><span class="flag-msg">${errors.length} Diameter error responses (result code ≥3000)</span></div></div>`:''}
+    </div>`;
+  }
+
+  // GTP
+  if(gtpPkts.length){
+    const msgs={};
+    gtpPkts.forEach(p=>{const m=(p.layers.gtpv2||{}).messageType||p.info||'?';msgs[m]=(msgs[m]||0)+1;});
+    const teids=new Set(gtpPkts.map(p=>(p.layers.gtpv2||{}).TEID).filter(t=>t&&t!=='0x00000000'));
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">📶</span>GTP session analysis</div>
+      <table class="mini-table">${Object.entries(msgs).slice(0,8).map(([m,n])=>`<tr><td>${esc(m)}</td><td style="text-align:right;color:var(--text)">${n}</td></tr>`).join('')}</table>
+      ${teids.size?`<div style="margin-top:8px;font-size:10px;color:var(--text2)">Active TEIDs (${teids.size}): <span style="color:var(--teal);font-family:var(--mono)">${[...teids].slice(0,5).join(', ')}</span></div>`:''}
+    </div>`;
+  }
+
+  // PFCP
+  if(pfcpPkts.length){
+    const msgs={};
+    pfcpPkts.forEach(p=>{const m=(p.layers.pfcp||{}).messageType||'?';msgs[m]=(msgs[m]||0)+1;});
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">🌐</span>PFCP session messages (N4)</div>
+      <table class="mini-table">${Object.entries(msgs).slice(0,8).map(([m,n])=>`<tr><td>${esc(m)}</td><td style="text-align:right;color:var(--text)">${n}</td></tr>`).join('')}</table>
+    </div>`;
+  }
+
+  // PTP timing
+  if(ptpPkts.length){
+    const msgs={};
+    ptpPkts.forEach(p=>{const m=(p.layers.ptp||{}).messageType||'?';msgs[m]=(msgs[m]||0)+1;});
+    const gms=new Set(ptpPkts.map(p=>(p.layers.ptp||{}).grandmasterID).filter(Boolean));
+    const syncRate=ptpPkts.filter(p=>((p.layers.ptp||{}).messageType||'').includes('Sync')).length;
+    html+=`<div class="dash-card">
+      <div class="dc-title"><span class="dc-icon">⏱</span>PTP / IEEE 1588 timing</div>
+      <table class="mini-table">${Object.entries(msgs).map(([m,n])=>`<tr><td>${esc(m)}</td><td style="text-align:right;color:var(--text)">${n}</td></tr>`).join('')}</table>
+      ${gms.size?`<div style="margin-top:8px;font-size:10px;color:var(--text2)">Grandmaster(s): <span style="color:var(--purple);font-family:var(--mono)">${[...gms].join(', ')}</span></div>`:''}
+      <div style="margin-top:4px;font-size:10px;color:var(--text2)">Sync messages: <span style="color:var(--green)">${syncRate}</span></div>
+      ${gms.size>1?`<div class="flag-list" style="margin-top:8px"><div class="flag-item"><span class="flag-sev sev-high">HIGH</span><span class="flag-msg">Multiple PTP grandmasters (${gms.size}) — BMCA election or rogue GM</span></div></div>`:''}
+    </div>`;
+  }
+
+  // 3GPP TS 33.117 compliance hints
+  html+=`<div class="dash-card" style="grid-column:1/-1">
+    <div class="dc-title"><span class="dc-icon">📋</span>3GPP TS 33.117 / GSMA FS.11 security hints</div>
+    <table class="compliance-table">
+      <thead><tr><th>Requirement</th><th>Observation</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>TS33.117 §4.2.3.1 — Diameter TLS</td><td>Diameter over SCTP without TLS detected</td><td class="${diamPkts.some(p=>p.proto==='Diameter')&&!ALL.some(p=>p.proto==='TLS'&&(p.layers.tcp||{}).dstPort===3868)?'comp-fail':'comp-pass'}">${diamPkts.some(p=>p.proto==='Diameter')?'⚠ Cleartext Diameter':'✓ N/A'}</td></tr>
+        <tr><td>TS33.117 §4.2.3.2 — IPsec on Gx/Rx</td><td>ESP tunnel presence</td><td class="${ALL.some(p=>p.proto==='ESP')?'comp-pass':'comp-warn'}">${ALL.some(p=>p.proto==='ESP')?'✓ ESP detected':'⚠ No ESP'}</td></tr>
+        <tr><td>TS33.117 §4.3.1 — GTP-C integrity</td><td>GTP-C sequence validation</td><td class="comp-warn">${gtpPkts.length?'⚠ Manual review needed':'✓ N/A'}</td></tr>
+        <tr><td>GSMA FS.11 §3 — Diameter roaming</td><td>External Diameter peers</td><td class="${diamPkts.length?'comp-warn':'comp-pass'}">${diamPkts.length?'⚠ Review peer authentication':'✓ N/A'}</td></tr>
+        <tr><td>O-RAN Fronthaul — PTP sync</td><td>PTP grandmaster stability</td><td class="${ptpPkts.length>0?(new Set(ptpPkts.map(p=>(p.layers.ptp||{}).grandmasterID).filter(Boolean)).size>1?'comp-fail':'comp-pass'):'comp-warn'}">${ptpPkts.length?new Set(ptpPkts.map(p=>(p.layers.ptp||{}).grandmasterID).filter(Boolean)).size>1?'⚠ Multiple GMs':'✓ Stable GM':'⚠ No PTP'}</td></tr>
+      </tbody>
+    </table>
+  </div>`;
+
+  dash.innerHTML=html;
+}
+
+// ════════════════════════════════════════════════════════
+//  REPORT GENERATOR
+// ════════════════════════════════════════════════════════
+function buildReport(){
+  const el=document.getElementById('reportContent');
+  const actions=document.getElementById('reportActions');
+  if(!ALL.length){el.innerHTML='<div class="no-data">Load a PCAP file to generate a report</div>';return;}
+  const t0=ALL[0].ts, dur=ALL[ALL.length-1].ts-t0;
+  const bytes=ALL.reduce((s,p)=>s+p.capLen,0);
+  const total=ALL.length;
+  const alerts=[]; const seen=new Set();
+  ALL.forEach(p=>(p.suspicions||[]).forEach(s=>{const k=s.level+s.msg;if(!seen.has(k)){seen.add(k);alerts.push(s);}}));
+  const highA=alerts.filter(a=>a.level==='high'), medA=alerts.filter(a=>a.level==='med'), lowA=alerts.filter(a=>a.level==='low');
+  const protoCnt={};
+  ALL.forEach(p=>{protoCnt[p.proto]=(protoCnt[p.proto]||0)+1;});
+  const now=new Date().toISOString().split('T')[0];
+  const fileName=document.getElementById('fileName').textContent||'unknown.pcap';
+
+  // TLS cipher findings
+  const tlsCipherPkts=ALL.filter(p=>p.layers&&p.layers.tlsCiphers);
+  const weakTLS=tlsCipherPkts.filter(p=>p.layers.tlsCiphers.weakCiphers!=='None');
+  const noTLS13=tlsCipherPkts.filter(p=>!p.layers.tlsCiphers.hasTLS13);
+  const noPFS=tlsCipherPkts.filter(p=>!p.layers.tlsCiphers.hasPFS);
+
+  el.innerHTML=`
+  <div class="report-section">
+    <div class="report-hdr">📄 Assessment report — ${esc(fileName)}</div>
+    <table class="mini-table" style="margin-bottom:8px">
+      <tr><td>Capture file</td><td style="color:var(--text);text-align:right;font-family:var(--mono)">${esc(fileName)}</td></tr>
+      <tr><td>Analysis date</td><td style="color:var(--text);text-align:right">${now}</td></tr>
+      <tr><td>Total packets</td><td style="color:var(--accent);text-align:right;font-family:var(--mono)">${total.toLocaleString()}</td></tr>
+      <tr><td>Capture duration</td><td style="color:var(--text);text-align:right">${fmtDur(dur)}</td></tr>
+      <tr><td>Total bytes</td><td style="color:var(--text);text-align:right">${fmtB(bytes)}</td></tr>
+      <tr><td>Distinct protocols</td><td style="color:var(--text);text-align:right">${Object.keys(protoCnt).length}</td></tr>
+    </table>
+  </div>
+
+  <div class="report-section">
+    <div class="report-hdr">🛡 Executive summary</div>
+    <div class="metric-row">
+      <div class="metric"><div class="metric-val" style="color:var(--red)">${highA.length}</div><div class="metric-lbl">High findings</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--yellow)">${medA.length}</div><div class="metric-lbl">Medium</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--green)">${lowA.length}</div><div class="metric-lbl">Low / Info</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--accent)">${Object.keys(protoCnt).length}</div><div class="metric-lbl">Protocols</div></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-hdr">🔍 Security findings</div>
+    <div class="flag-list">
+      ${alerts.length?alerts.map(a=>`<div class="flag-item"><span class="flag-sev sev-${a.level}">${a.level.toUpperCase()}</span><span class="flag-msg">${esc(a.msg)}</span></div>`).join(''):'<div class="flag-item"><span class="flag-sev sev-low">OK</span><span class="flag-msg">No security flags detected</span></div>'}
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-hdr">🔐 TLS cipher audit</div>
+    ${tlsCipherPkts.length?`
+    <table class="compliance-table">
+      <thead><tr><th>Check</th><th>Result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Weak cipher suites offered</td><td>${weakTLS.length} ClientHellos</td><td class="${weakTLS.length?'comp-fail':'comp-pass'}">${weakTLS.length?'⚠ Weak ciphers found':'✓ Clean'}</td></tr>
+        <tr><td>TLS 1.3 support</td><td>${tlsCipherPkts.length-noTLS13.length}/${tlsCipherPkts.length} clients</td><td class="${noTLS13.length?'comp-warn':'comp-pass'}">${noTLS13.length?'⚠ Some clients missing TLS 1.3':'✓ All support TLS 1.3'}</td></tr>
+        <tr><td>Perfect Forward Secrecy</td><td>${tlsCipherPkts.length-noPFS.length}/${tlsCipherPkts.length} clients</td><td class="${noPFS.length?'comp-fail':'comp-pass'}">${noPFS.length?'⚠ No PFS in '+noPFS.length+' client(s)':'✓ PFS offered'}</td></tr>
+        ${weakTLS.length?`<tr><td>Weak ciphers detail</td><td colspan="2" style="color:var(--red);font-family:var(--mono)">${[...new Set(weakTLS.map(p=>p.layers.tlsCiphers.weakCiphers))].join('; ').substring(0,120)}</td></tr>`:''}
+      </tbody>
+    </table>`:
+    '<div style="color:var(--text2);font-size:11px;padding:8px 0">No TLS ClientHello packets found — no cipher audit available</div>'}
+  </div>
+
+  <div class="report-section">
+    <div class="report-hdr">📡 Protocol inventory</div>
+    <table class="compliance-table">
+      <thead><tr><th>Protocol</th><th>Packets</th><th>% of traffic</th><th>Risk note</th></tr></thead>
+      <tbody>${Object.entries(protoCnt).sort((a,b)=>b[1]-a[1]).map(([p,c])=>{
+        const pct=(c/total*100).toFixed(1);
+        const RISK={'FTP':'Cleartext credentials','Telnet':'Cleartext session','SNMP':'Cleartext community string','HTTP':'Unencrypted web traffic','POP3':'Cleartext email credentials','IMAP':'Cleartext email credentials','SMTP':'Cleartext email (check STARTTLS)','TFTP':'Unauthenticated file transfer','RIP':'No authentication'};
+        return `<tr><td style="color:${pcol(p)};font-weight:600">${esc(p)}</td><td>${c.toLocaleString()}</td><td>${pct}%</td><td style="color:${RISK[p]?'var(--yellow)':'var(--text2)'}">${RISK[p]||'—'}</td></tr>`;
+      }).join('')}</tbody>
+    </table>
+  </div>
+
+  <div class="report-section">
+    <div class="report-hdr">🔓 Credential findings</div>
+    ${harvested.length?`<table class="compliance-table">
+      <thead><tr><th>Protocol</th><th>Severity</th><th>Packet</th><th>Finding</th></tr></thead>
+      <tbody>${harvested.map(c=>`<tr><td>${esc(c.proto)}</td><td class="comp-${c.level==='high'?'fail':c.level==='med'?'warn':'pass'}">${c.level.toUpperCase()}</td><td>#${c.pktIdx}</td><td>${esc(c.field)}: ${esc(c.value)}</td></tr>`).join('')}</tbody>
+    </table>`:'<div style="color:var(--green);font-size:11px;padding:8px 0">✓ No cleartext credentials found</div>'}
+  </div>
+  `;
+  if(actions) actions.style.display='flex';
+}
+
+function exportReportHTML(){
+  const content=document.getElementById('reportContent').innerHTML;
+  const now=new Date().toISOString().split('T')[0];
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>SudoShark Security Report ${now}</title><style>body{font-family:system-ui,sans-serif;background:#0d1117;color:#e8eaf0;padding:40px;max-width:900px;margin:0 auto}table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px}th{font-size:11px;text-transform:uppercase;color:#6b7280;padding:6px 8px;text-align:left;border-bottom:1px solid #21262d}td{padding:5px 8px;border-bottom:1px solid #161b22;color:#9ca3af}td:first-child{color:#e8eaf0}.comp-pass{color:#34d399}.comp-warn{color:#fbbf24}.comp-fail{color:#f87171}.flag-item{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid #21262d}.flag-sev{font-size:10px;font-weight:700;border-radius:3px;padding:1px 5px;white-space:nowrap}.sev-high{background:rgba(248,113,113,.15);color:#f87171}.sev-med{background:rgba(251,191,36,.12);color:#fbbf24}.sev-low{background:rgba(52,211,153,.1);color:#34d399}.report-hdr{font-weight:600;padding:8px 0 6px;border-bottom:1px solid #21262d;margin:16px 0 10px}.metric-row{display:flex;gap:12px;margin-bottom:12px}.metric{background:#161b22;border-radius:6px;padding:10px;flex:1}.metric-val{font-size:22px;font-weight:700;font-family:monospace}.metric-lbl{font-size:10px;color:#6b7280;margin-top:3px}</style></head><body>${content}</body></html>`;
+  const a=document.createElement('a');a.href='data:text/html;charset=utf-8,'+encodeURIComponent(html);a.download=`sudoshark-report-${now}.html`;a.click();
+}
+function exportReportCSV(){
+  const rows=[['Category','Check','Result','Status']];
+  const alerts=[]; const seen=new Set();
+  ALL.forEach(p=>(p.suspicions||[]).forEach(s=>{const k=s.level+s.msg;if(!seen.has(k)){seen.add(k);alerts.push(s);}}));
+  alerts.forEach(a=>rows.push(['Security Finding',a.msg,'',a.level.toUpperCase()]));
+  harvested.forEach(c=>rows.push(['Credential',c.field,c.value,c.level.toUpperCase()]));
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n'));a.download='sudoshark-findings.csv';a.click();
+}
+
+function exportCSV(){
+  const rows=[['#','Time','Source','Destination','Protocol','Length','Info']];
+  const t0=ALL.length?ALL[0].ts:0;
+  SHOWN.forEach(p=>rows.push([p.idx,(p.ts-t0).toFixed(6),p.src,p.dst,p.proto,p.capLen,`"${(p.info||'').replace(/"/g,'""')}"`]));
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(r=>r.join(',')).join('\n'));
+  a.download='capture-export.csv'; a.click();
+}
+</script>
+</body>
+</html>
