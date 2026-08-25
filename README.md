@@ -18,7 +18,7 @@
 [![Single file](https://img.shields.io/badge/delivery-single%20HTML%20file-blue?style=flat-square)]()
 [![Privacy](https://img.shields.io/badge/privacy-100%25%20local%2C%20no%20upload-green?style=flat-square)]()
 
-*Built by [@sudoninja](https://github.com/sudoninja-noob) · Senior Manager, Cyber Security Services · SGS Brightsight*
+*Built by [@sudoninja](https://github.com/sudoninja-noob) ·
 
 </div>
 
@@ -91,22 +91,14 @@ not tcp and not udp
 
 ## 🚀 Usage
 
-### Option 1 — Direct download
-```bash
-# Download and open in browser
-curl -L https://raw.githubusercontent.com/sudoninja-noob/sudoshark/main/sudoshark.html -o sudoshark.html
-open sudoshark.html   # macOS
-xdg-open sudoshark.html  # Linux
-```
-
-### Option 2 — Clone and use
+### Option 1 — Clone and use
 ```bash
 git clone https://github.com/sudoninja-noob/sudoshark
 cd sudoshark
 # Open sudoshark.html in any modern browser
 ```
 
-### Option 3 — GitHub Pages
+### Option 2 — GitHub Pages
 Visit: `https://sudoninja-noob.github.io/sudoshark/`
 
 ---
@@ -203,9 +195,7 @@ PRs welcome. Key areas:
 
 ## 👤 Author
 
-**@sudoninja** · Sanjay  
-Senior Manager, Cyber Security Services — SGS Brightsight (formerly Granite River Labs)  
-Bengaluru, India
+**@sudoninja** ·
 
 - 🐦 GitHub: [@sudoninja-noob](https://github.com/sudoninja-noob)
 - 🔐 Domain: IoT · Automotive · Telecom · AI/LLM Security
