@@ -106,7 +106,7 @@ cd sudoshark
 ```
 
 ### Option 3 — GitHub Pages
-Visit: `https://sudoninja-noob.github.io/sudoshark/`
+Visit: `https://sudoninja-noob.github.io/tool/sudoshark.html`
 
 ---
 
