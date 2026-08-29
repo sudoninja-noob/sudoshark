@@ -143,7 +143,7 @@ cd sudoshark
 # Open sudoshark.html in any modern browser
 ```
 
-### Option 3 — GitHub Pages
+### Option 3 — Live 
 Visit: `https://sudoninja-noob.github.io/sudoshark/`
 
 ---
